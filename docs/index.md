@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 👋 Hi
   text: 这里是落秋cc
-  tagline: 🥵🥵🥵
+  tagline: 🥵🤩😤
   actions:
     - theme: brand
       text: 最新博文
