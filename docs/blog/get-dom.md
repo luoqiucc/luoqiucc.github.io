@@ -1,4 +1,4 @@
-HTML部分
+**HTML部分**
 ```html
 <div class="apple">Apple</div>
 <div class="orange">Orange</div>
@@ -6,7 +6,7 @@ HTML部分
 <img class="image" src="/images/cover.jpg" alt="cover">
 ```
 
-JavaScript部分
+**JavaScript部分**
 ```javascript
 // 通过bind()函数封装document.querySelector来简化后续操作
 const $ = document.querySelector.bind(document)
