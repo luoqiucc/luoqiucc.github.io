@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: 最新博文
-      link: /blog/get-dom
+      link: /blog/bar-code-scanner
     - theme: alt
       text: 前往我的GitHub主页
       link: https://github.com/luoqiucc

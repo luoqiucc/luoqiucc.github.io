@@ -1,3 +1,5 @@
+# 记录一个获取Dom元素的写法
+
 **HTML部分**
 ```html
 <div class="apple">Apple</div>

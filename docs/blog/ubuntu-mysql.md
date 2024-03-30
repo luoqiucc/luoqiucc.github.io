@@ -1,4 +1,8 @@
+# Ubuntu系统安装MySQL(使用DEB-Bundle包)
+
+::: info ___
 关于这个问题网上的教程都比较旧，所以特别总结了新的比较简洁的方法。
+:::
 
 ## step 1: 下载软件包
 前往MySQL官网下载该文件，官网链接：[https://dev.mysql.com/downloads/mysql/](https://dev.mysql.com/downloads/mysql/)，根据自己的需要选择MySQL的版本，选好后在文件下载列表中找到DEB Bundle文件并下载。
