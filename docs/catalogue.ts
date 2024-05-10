@@ -1,7 +1,15 @@
 export default [
   {
+    text: '部署你的Code Server(Ubuntu)',
+    link: '/blog/code-server',
+  },
+  {
     text: '在前端页面使用扫码枪',
     link: '/blog/bar-code-scanner',
+  },
+  {
+    text: '节流与防抖(前端性能优化)',
+    link: '/blog/throttle-debounce',
   },
   {
     text: '为你的Koa应用添加对https的支持',
