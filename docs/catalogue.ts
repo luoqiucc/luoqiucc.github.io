@@ -1,5 +1,9 @@
 export default [
   {
+    text: '关于我',
+    link: '/blog/about-me',
+  },
+  {
     text: '部署你的Code Server(Ubuntu)',
     link: '/blog/code-server',
   },

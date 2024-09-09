@@ -4,14 +4,23 @@ layout: home
 hero:
   name: 👋 Hi
   text: 这里是落秋cc
-  tagline: 🥵🤩😤
+  tagline: 你这个人，真是满脑子都是Go呢😤
   actions:
     - theme: brand
       text: 最新博文
       link: /blog/code-server
     - theme: alt
-      text: 前往我的GitHub主页
+      text: GitHub
       link: https://github.com/luoqiucc
+    - theme: alt
+      text: Facebook
+      link: https://www.facebook.com/profile.php?id=100084243072146&mibextid=ZbWKwL
+    - theme: alt
+      text: X(Twitter)
+      link: https://x.com/3zfgv6v89Ugh2cp?t=IS6xdzwfjfPuI5tYd8AABQ&s=09
+    - theme: alt
+      text: Bilibili
+      link: https://space.bilibili.com/94905532?spm_id_from=333.1007.0.0
 
 features:
   - title: SUYO
