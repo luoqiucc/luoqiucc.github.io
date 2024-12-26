@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content'
+
+import Layout from '../../layouts/Layout.astro'
+import PostCard from '../../components/PostCard.astro'
+import PageTitle from '../../components/typography/PageTitle.astro'
+
+const pageTitle = '落秋cc | 文章'
+
+const allPosts = await getCollection('posts')
+---
+
+<Layout pageTitle={pageTitle}>
+  <PageTitle>全部文章</PageTitle>
+  {
+    allPosts.map((post) => (
+      <a href={`/posts/${post.slug}`}>
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          tags={post.data.tags}
+          pubDate={post.data.pubDate}
+          author={post.data.author}
+          coverUrl={post.data.coverUrl}
+        />
+      </a>
+    ))
+  }
+</Layout>

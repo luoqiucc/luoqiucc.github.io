@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content'
+
+import PostCard from '../../components/PostCard.astro'
+import Layout from '../../layouts/Layout.astro'
+import PageTitle from '../../components/typography/PageTitle.astro'
+
+export async function getStaticPaths() {
+  const postEntries = await getCollection('posts')
+
+  const tags = [...new Set(postEntries.map((post) => post.data.tags).flat())]
+
+  return tags.map((tag) => {
+    const posts = postEntries.filter((post) => post.data.tags.includes(tag))
+
+    return {
+      params: { tag },
+      props: { posts },
+    }
+  })
+}
+
+const { tag } = Astro.params
+const { posts } = Astro.props
+---
+
+<Layout pageTitle={`标签 | ${tag}`}>
+  <PageTitle>标签: {tag}</PageTitle>
+  <div>
+    {
+      posts.map((post) => (
+        <a href={`/posts/${post.slug}`}>
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            tags={post.data.tags}
+            pubDate={post.data.pubDate}
+            author={post.data.author}
+            coverUrl={post.data.coverUrl}
+          />
+        </a>
+      ))
+    }
+  </div>
+</Layout>

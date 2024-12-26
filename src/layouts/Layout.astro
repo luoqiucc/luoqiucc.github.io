@@ -1,7 +1,10 @@
 ---
 import '../styles/global.css'
 
-const siteTitle = '落球cc'
+import Header from '../components/header/Header.astro'
+import Footer from '../components/footer/Footer.astro'
+
+const { pageTitle = '落球cc' } = Astro.props
 ---
 
 <!doctype html>
@@ -11,9 +14,20 @@ const siteTitle = '落球cc'
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{siteTitle}</title>
+    <title>{pageTitle}</title>
+    <style>
+      .content {
+        max-width: 1032px;
+        margin: auto;
+        padding: 0 16px 32px 16px;
+      }
+    </style>
   </head>
   <body>
-    <slot />
+    <Header />
+    <main class="content">
+      <slot />
+    </main>
+    <Footer />
   </body>
 </html>

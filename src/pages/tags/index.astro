@@ -1,0 +1,18 @@
+---
+import { getCollection } from 'astro:content'
+
+import Layout from '../../layouts/Layout.astro'
+import PageTitle from '../../components/typography/PageTitle.astro'
+import TagCloud from '../../components/TagCloud.astro'
+
+const pageTitle = '落秋cc | 标签'
+
+const postEntries = await getCollection('posts')
+const tags = [...new Set(postEntries.map((post) => post.data.tags).flat())]
+---
+
+<Layout pageTitle={pageTitle}>
+  <PageTitle>全部标签</PageTitle>
+  <TagCloud tags={tags} />
+  <div style="height: 480px;"></div>
+</Layout>

@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content'
+
+import MarkdownView from '../../components/MarkdownView.astro'
+import PostLayout from '../../layouts/PostLayout.astro'
+
+export async function getStaticPaths() {
+  const postEntries = await getCollection('posts')
+
+  return postEntries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { Content } = await entry.render()
+---
+
+<PostLayout pageTitle={`文章 | ${entry.data.title}`}>
+  <section class="author-date">
+    {entry.data.pubDate.toISOString().slice(0, 10)} @{entry.data.author}
+  </section>
+  <h1 class="title">{entry.data.title}</h1>
+  <section class="tags">
+    {
+      entry.data.tags.map((tag: string) => (
+        <a href={`/tags/${tag}`}>
+          <section class="tag-item">{tag}</section>
+        </a>
+      ))
+    }
+  </section>
+  <MarkdownView>
+    <Content />
+  </MarkdownView>
+</PostLayout>
+
+<style>
+  .author-date {
+    margin-top: 48px;
+    font-size: 16px;
+    font-style: italic;
+    color: #525ceb;
+  }
+
+  .title {
+    margin: 16px 0;
+    font-size: 36px;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgb(224, 224, 224);
+  }
+
+  .tag-item {
+    padding: 4px 6px;
+    margin: 4px;
+    font-size: 12px;
+    background-color: #bfcfe7;
+    color: black;
+  }
+</style>
