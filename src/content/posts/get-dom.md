@@ -1,7 +1,7 @@
 ---
 title: '记录一个获取Dom元素的写法'
 description: '记录一个获取Dom元素的写法'
-pubDate: 2022-06-12
+pubDate: 2024-06-12
 tags: ['HTML', 'JavaScript']
 ---
 

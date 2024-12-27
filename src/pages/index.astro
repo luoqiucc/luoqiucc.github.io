@@ -8,8 +8,8 @@ import PostCard from '../components/PostCard.astro'
 
 const pageTitle = '落秋cc | 首页'
 
-const allPosts = await getCollection('posts')
-const posts = allPosts.filter((post) => post.data.isFocus)
+const posts = await getCollection('posts')
+const reversedPosts = posts.filter((post) => post.data.isFocus).reverse()
 ---
 
 <Layout pageTitle={pageTitle}>
@@ -18,7 +18,7 @@ const posts = allPosts.filter((post) => post.data.isFocus)
   <Banner />
   <PageTitle>热门文章</PageTitle>
   {
-    posts.map((post) => (
+    reversedPosts.map((post) => (
       <a href={`/posts/${post.slug}`}>
         <PostCard
           title={post.data.title}

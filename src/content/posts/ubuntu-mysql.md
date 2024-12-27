@@ -1,7 +1,7 @@
 ---
 title: 'Ubuntu 系统安装 MySQL(使用 DEB-Bundle 包)'
 description: '关于这个问题网上的教程都比较旧，所以特别总结了新的比较简洁的方法。'
-pubDate: 2022-09-23
+pubDate: 2023-09-23
 tags: ['Ubuntu', 'MySQL']
 ---
 
