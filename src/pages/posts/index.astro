@@ -8,13 +8,15 @@ import PageTitle from '../../components/typography/PageTitle.astro'
 const pageTitle = '落秋cc | 文章'
 
 const posts = await getCollection('posts')
-const reversedPosts = posts.reverse()
+posts.sort((x, y) => {
+  return y.data.pubDate.getTime() - x.data.pubDate.getTime()
+})
 ---
 
 <Layout pageTitle={pageTitle}>
   <PageTitle>全部文章</PageTitle>
   {
-    reversedPosts.map((post) => (
+    posts.map((post) => (
       <a href={`/posts/${post.slug}`}>
         <PostCard
           title={post.data.title}
