@@ -2,7 +2,7 @@
 title: '安装Docker(Ubuntu@24)'
 description: '使用官方apt仓库安装'
 pubDate: 2024-12-29
-tags: ['Ubuntu', 'Docker']
+tags: ['Ubuntu', 'Docker', '安装&部署']
 ---
 
 ## Step 1: 设置 Docker 的 Apt 存储库
