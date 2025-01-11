@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content'
 
 import MarkdownView from '../../components/MarkdownView.astro'
 import PostLayout from '../../layouts/PostLayout.astro'
+import Utterances from '../../components/Utterances.astro'
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts')
@@ -34,6 +35,8 @@ const { Content } = await entry.render()
   <MarkdownView>
     <Content />
   </MarkdownView>
+  <div class="line"></div>
+  <Utterances />
 </PostLayout>
 
 <style>
@@ -63,5 +66,9 @@ const { Content } = await entry.render()
     font-size: 12px;
     background-color: #bfcfe7;
     color: black;
+  }
+
+  .line {
+    border-bottom: 1px solid rgb(224, 224, 224);
   }
 </style>
