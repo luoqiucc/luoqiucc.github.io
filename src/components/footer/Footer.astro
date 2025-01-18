@@ -1,9 +1,5 @@
 ---
-import { Image } from 'astro:assets'
 
-import Bilibili from '../../assets/images/social/bilibili.png'
-import Github from '../../assets/images/social/github.png'
-import Facebook from '../../assets/images/social/facebook.png'
 ---
 
 <footer class="footer">
@@ -12,36 +8,12 @@ import Facebook from '../../assets/images/social/facebook.png'
       <h3 class="logo">动核互联</h3>
       <h5 class="logo-minor">DYNAMISM CORE</h5>
     </section>
-    <div class="social">
-      <section class="social-item">
-        <a
-          target="_blank"
-          href="https://space.bilibili.com/94905532?spm_id_from=333.1007.0.0"
-        >
-          <Image width={30} src={Bilibili} alt="bilibili" />
-        </a>
-      </section>
-      <section class="social-item">
-        <a
-          target="_blank"
-          href="https://www.facebook.com/profile.php?id=100084243072146&mibextid=ZbWKwL"
-        >
-          <Image width={30} src={Facebook} alt="facebook" />
-        </a>
-      </section>
-      <section class="social-item">
-        <a target="_blank" href="https://github.com/luoqiucc">
-          <Image width={30} src={Github} alt="github" />
-        </a>
-      </section>
-    </div>
   </div>
 </footer>
 <style>
   .footer {
     width: 100%;
-    /* background-color: #525ceb; */
-    background-color: #E34234;
+    background-color: #000000;
   }
 
   .footer-content {
@@ -51,18 +23,6 @@ import Facebook from '../../assets/images/social/facebook.png'
     display: flex;
     justify-content: space-between;
     align-items: stretch;
-  }
-
-  .social {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #3d3b40;
-  }
-
-  .social-item {
-    padding: 16px;
-    padding-bottom: 8px;
   }
 
   .brand {

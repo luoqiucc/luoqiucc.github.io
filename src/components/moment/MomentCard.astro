@@ -1,0 +1,75 @@
+---
+const { pubDate, author, url, title } = Astro.props
+---
+
+<div class="moment">
+  <div class="moment-content">
+    <section class="moment-info">
+      {pubDate.toISOString().slice(0, 10)} @{author}
+    </section>
+    <div class="moment-body">"<slot />"</div>
+    <section class="moment-title">
+      —— {title}
+    </section>
+  </div>
+  <div class="moment-more">
+    <a target="_blank" title="与该动态有关的站外链接" href={url}> 额外信息 </a>
+  </div>
+</div>
+
+<style>
+  .moment {
+    position: relative;
+    margin: 24px 0;
+  }
+
+  .moment:hover {
+    .moment-content {
+      transform: translateX(-80px);
+    }
+
+    .moment-more {
+      z-index: 1;
+      opacity: 1;
+    }
+  }
+
+  .moment-more {
+    position: absolute;
+    font-weight: bold;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: 0.3s;
+  }
+
+  .moment-content {
+    padding: 16px;
+    background: linear-gradient(135deg, #525ceb 60%, #000000 60%, #000000 100%);
+    transition: 0.3s;
+  }
+
+  .moment-body {
+    margin-bottom: 16px;
+    font-size: 16px;
+    letter-spacing: 3px;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .moment-title {
+    text-align: right;
+    font-size: 14px;
+    letter-spacing: 3px;
+    font-weight: bold;
+    color: #ffffff9f;
+  }
+
+  .moment-info {
+    padding-bottom: 16px;
+    font-size: 12px;
+    font-style: italic;
+    color: #ffffff;
+  }
+</style>

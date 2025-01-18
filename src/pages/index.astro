@@ -2,23 +2,47 @@
 import { getCollection } from 'astro:content'
 
 import Layout from '../layouts/Layout.astro'
-import Banner from '../components/banner/Banner.astro'
 import PageTitle from '../components/typography/PageTitle.astro'
 import PostCard from '../components/PostCard.astro'
+import MomentCard from '../components/moment/MomentCard.astro'
+import MomentWrapper from '../components/moment/MomentWrapper.astro'
+import ProfileCard from '../components/ProfileCard.astro'
 
 const pageTitle = '落秋cc | 首页'
 
 const posts = await getCollection('posts')
-const reversedPosts = posts.filter((post) => post.data.isFocus).reverse()
+const moments = await getCollection('moments')
+
+const focusPosts = posts.filter((post) => post.data.isFocus)
+const focusMoments = moments.filter((post) => post.data.isFocus)
 ---
 
 <Layout pageTitle={pageTitle}>
+  <ProfileCard />
   <PageTitle>动态</PageTitle>
-  <br />
-  <Banner />
+  <MomentWrapper>
+    {
+      focusMoments.map(async (moment) => {
+        return (
+          <MomentCard
+            pubDate={moment.data.pubDate}
+            author={moment.data.author}
+            url={moment.data.url}
+            title={moment.data.title}
+          >
+            {moment.body}
+          </MomentCard>
+        )
+      })
+    }
+  </MomentWrapper>
+  <a href="/moments">
+    <h3 class="all">查看所有动态</h3>
+  </a>
+
   <PageTitle>热门文章</PageTitle>
   {
-    reversedPosts.map((post) => (
+    focusPosts.map((post) => (
       <a href={`/posts/${post.slug}`}>
         <PostCard
           title={post.data.title}
@@ -32,15 +56,14 @@ const reversedPosts = posts.filter((post) => post.data.isFocus).reverse()
     ))
   }
   <a href="/posts">
-    <h3 class="all-post">查看全部文章</h3>
+    <h3 class="all">查看所有文章</h3>
   </a>
 </Layout>
 
 <style>
-  .all-post {
+  .all {
     margin: 24px 0;
     font-size: 16px;
-    /* color: #525ceb; */
-    color: #e34234;
+    color: #525ceb;
   }
 </style>

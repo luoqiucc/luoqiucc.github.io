@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content'
+
+import Layout from '../../layouts/Layout.astro'
+import PageTitle from '../../components/typography/PageTitle.astro'
+import MomentWrapper from '../../components/moment/MomentWrapper.astro'
+import MomentCard from '../../components/moment/MomentCard.astro'
+
+const pageTitle = '落秋cc | 动态'
+
+const moments = await getCollection('moments')
+moments.sort((x, y) => {
+  return y.data.pubDate.getTime() - x.data.pubDate.getTime()
+})
+---
+
+<Layout pageTitle={pageTitle}>
+  <PageTitle>全部动态</PageTitle>
+  <MomentWrapper>
+    {
+      moments.map(async (moment) => {
+        return (
+          <MomentCard
+            pubDate={moment.data.pubDate}
+            author={moment.data.author}
+            url={moment.data.url}
+            title={moment.data.title}
+          >
+            {moment.body}
+          </MomentCard>
+        )
+      })
+    }
+  </MomentWrapper>
+  <div style="height: 480px;"></div>
+</Layout>
