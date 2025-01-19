@@ -14,7 +14,14 @@ const posts = await getCollection('posts')
 const moments = await getCollection('moments')
 
 const focusPosts = posts.filter((post) => post.data.isFocus)
+focusPosts.sort((x, y) => {
+  return y.data.pubDate.getTime() - x.data.pubDate.getTime()
+})
+
 const focusMoments = moments.filter((post) => post.data.isFocus)
+focusMoments.sort((x, y) => {
+  return y.data.pubDate.getTime() - x.data.pubDate.getTime()
+})
 ---
 
 <Layout pageTitle={pageTitle}>
