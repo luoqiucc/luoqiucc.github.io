@@ -2,7 +2,7 @@
 title: '部署你的Gitlab CE(Ubuntu@24)'
 description: 'Ubuntu@24部署Gitlab CE，本文介绍了在线与离线两种安装方式'
 pubDate: 2025-01-10
-tags: ['Ubuntu', 'Gitlab CE', '安装&部署']
+tags: ['Ubuntu', 'Gitlab CE', '安装&部署', 'Linux']
 ---
 
 ## 在线安装

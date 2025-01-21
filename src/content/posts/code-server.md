@@ -1,9 +1,8 @@
 ---
-isFocus: true
 title: '部署你的 Code Server(Ubuntu)'
 description: '部署你的 Code Server(Ubuntu)'
 pubDate: 2024-03-24
-tags: ['Ubuntu', 'CodeServer', '安装&部署']
+tags: ['Ubuntu', 'CodeServer', '安装&部署', 'Linux']
 ---
 
 ## 使用官方的安装脚本 _install.sh_
