@@ -50,13 +50,15 @@ function getPage(): { pageNumber: number; url: string | undefined }[] {
         {pageString.pageNumber == 0 ? (
           <span class="page_number">...</span>
         ) : (
-          <a href={pageString.url}>
+          <span>
             {pageString.pageNumber == page.currentPage ? (
               <span class="page_number active">{pageString.pageNumber}</span>
             ) : (
-              <span class="page_number">{pageString.pageNumber}</span>
+              <a href={pageString.url}>
+                <span class="page_number">{pageString.pageNumber}</span>
+              </a>
             )}
-          </a>
+          </span>
         )}
       </span>
     ))
