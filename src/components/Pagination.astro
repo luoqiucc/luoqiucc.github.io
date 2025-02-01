@@ -1,0 +1,86 @@
+---
+const { page } = Astro.props
+
+// TODO: 有点小瑕疵
+function getPage(): { pageNumber: number; url: string | undefined }[] {
+  let pageString = []
+  const { currentPage, lastPage, url } = page
+
+  pageString.push({ pageNumber: currentPage, url: url.current })
+
+  if (page.url.next) {
+    pageString.push({
+      pageNumber: currentPage + 1,
+      url: url.next,
+    })
+
+    if (currentPage + 1 != lastPage) {
+      pageString.push({
+        pageNumber: lastPage,
+        url: url.last,
+      })
+      pageString.splice(pageString.length - 1, 0, { pageNumber: 0, url: '' })
+    }
+  }
+
+  if (page.url.prev) {
+    pageString.unshift({
+      pageNumber: currentPage - 1,
+      url: url.prev,
+    })
+
+    if (currentPage - 1 != 1) {
+      pageString.unshift({
+        pageNumber: 1,
+        url: url.first,
+      })
+      pageString.splice(1, 0, { pageNumber: 0, url: '' })
+    }
+  }
+
+  return pageString
+}
+---
+
+<div class="pagination">
+  {page.url.prev ? <a href={page.url.prev}>上一页 |</a> : null}
+  {
+    getPage().map((pageString) => (
+      <span>
+        {pageString.pageNumber == 0 ? (
+          <span class="page_number">...</span>
+        ) : (
+          <a href={pageString.url}>
+            {pageString.pageNumber == page.currentPage ? (
+              <span class="page_number active">{pageString.pageNumber}</span>
+            ) : (
+              <span class="page_number">{pageString.pageNumber}</span>
+            )}
+          </a>
+        )}
+      </span>
+    ))
+  }
+  {page.url.next ? <a href={page.url.next}>| 下一页</a> : null}
+</div>
+
+<style>
+  .pagination {
+    margin: 16px 0;
+  }
+
+  .page_number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .active {
+    background-color: #525ceb;
+    color: white;
+  }
+</style>

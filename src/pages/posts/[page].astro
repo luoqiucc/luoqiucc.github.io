@@ -4,19 +4,26 @@ import { getCollection } from 'astro:content'
 import Layout from '../../layouts/Layout.astro'
 import PostCard from '../../components/PostCard.astro'
 import PageTitle from '../../components/typography/PageTitle.astro'
+import Pagination from '../../components/Pagination.astro'
 
 const pageTitle = '落秋cc | 博客'
 
-const posts = await getCollection('posts')
-posts.sort((x, y) => {
-  return y.data.pubDate.getTime() - x.data.pubDate.getTime()
-})
+export async function getStaticPaths({ paginate }) {
+  const posts = await getCollection('posts')
+  posts.sort((x, y) => {
+    return y.data.pubDate.getTime() - x.data.pubDate.getTime()
+  })
+
+  return paginate(posts, { pageSize: 1 })
+}
+
+const { page } = Astro.props
 ---
 
 <Layout pageTitle={pageTitle}>
   <PageTitle>博客</PageTitle>
   {
-    posts.map((post) => (
+    page.data.map((post) => (
       <a href={`/posts/${post.id}`}>
         <PostCard
           title={post.data.title}
@@ -29,4 +36,6 @@ posts.sort((x, y) => {
       </a>
     ))
   }
+
+  <Pagination page={page} />
 </Layout>
