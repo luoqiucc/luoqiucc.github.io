@@ -14,5 +14,4 @@ const tags = [...new Set(postEntries.map((post) => post.data.tags).flat())]
 <Layout pageTitle={pageTitle}>
   <PageTitle>全部标签</PageTitle>
   <TagCloud tags={tags} />
-  <div style="height: 480px;"></div>
 </Layout>

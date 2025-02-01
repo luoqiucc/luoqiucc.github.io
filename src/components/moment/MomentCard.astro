@@ -7,7 +7,7 @@ const { pubDate, author, url, title } = Astro.props
     <section class="moment-info">
       {pubDate.toISOString().slice(0, 10)} @{author}
     </section>
-    <div class="moment-body">"<slot />"</div>
+    <div class="moment-body"><slot /></div>
     <section class="moment-title">
       —— {title}
     </section>
