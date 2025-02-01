@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content'
+import { getCollection, render } from 'astro:content'
 
 import MarkdownView from '../../components/MarkdownView.astro'
 import PostLayout from '../../layouts/PostLayout.astro'
@@ -9,13 +9,13 @@ export async function getStaticPaths() {
   const postEntries = await getCollection('posts')
 
   return postEntries.map((entry) => ({
-    params: { slug: entry.slug },
+    params: { id: entry.id },
     props: { entry },
   }))
 }
 
 const { entry } = Astro.props
-const { Content } = await entry.render()
+const { Content } = await render(entry)
 ---
 
 <PostLayout pageTitle={`文章 | ${entry.data.title}`}>

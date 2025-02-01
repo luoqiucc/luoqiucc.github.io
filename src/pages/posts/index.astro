@@ -17,7 +17,7 @@ posts.sort((x, y) => {
   <PageTitle>博客</PageTitle>
   {
     posts.map((post) => (
-      <a href={`/posts/${post.slug}`}>
+      <a href={`/posts/${post.id}`}>
         <PostCard
           title={post.data.title}
           description={post.data.description}

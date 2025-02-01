@@ -11,3 +11,11 @@ export const postSchema = z.object({
     .string()
     .default('https://avatars.githubusercontent.com/u/109642163?v=4'),
 })
+
+export const momentSchema = z.object({
+  isFocus: z.boolean().default(false),
+  title: z.string().default('无题'),
+  pubDate: z.date(),
+  author: z.string().default('落秋cc'),
+  url: z.string().default('/'),
+})
