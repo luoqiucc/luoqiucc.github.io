@@ -4,7 +4,7 @@ import { glob } from 'astro/loaders'
 import { postSchema, momentSchema } from './schemas/index.ts'
 
 const posts = defineCollection({
-  loader: glob({ pattern: '*.md', base: './src/content/posts' }),
+  loader: glob({ pattern: '*.{md,mdx}', base: './src/content/posts' }),
   schema: postSchema,
 })
 
