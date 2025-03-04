@@ -1,7 +1,7 @@
 ---
 title: '安装 Node.js 与 npm (Ubuntu@24)'
 description: '本文主要介绍从NodeSource源安装 Node.js 和 npm'
-pubDate: 2025-01-05
+pubDate: 2024-05-23
 tags: ['Ubuntu', 'Node.js', '安装&部署', 'Linux']
 ---
 

@@ -12,6 +12,9 @@ export async function getStaticPaths() {
 
   return tags.map((tag) => {
     const posts = postEntries.filter((post) => post.data.tags.includes(tag))
+    posts.sort((x, y) => {
+      return y.data.pubDate.getTime() - x.data.pubDate.getTime()
+    })
 
     return {
       params: { tag },
