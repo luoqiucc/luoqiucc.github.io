@@ -1,5 +1,4 @@
 ---
-isFocus: true
 pubDate: 2025-02-02
 ---
 

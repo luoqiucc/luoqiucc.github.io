@@ -18,10 +18,10 @@ focusPosts.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
 
-const focusMoments = moments.filter((post) => post.data.isFocus)
-focusMoments.sort((x, y) => {
+moments.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
+const latestMoments = moments.slice(0, 3)
 ---
 
 <Layout pageTitle={pageTitle}>
@@ -29,7 +29,7 @@ focusMoments.sort((x, y) => {
   <PageTitle>动态</PageTitle>
   <MomentWrapper>
     {
-      focusMoments.map(async (moment) => {
+      latestMoments.map(async (moment) => {
         return (
           <MomentCard
             pubDate={moment.data.pubDate}

@@ -1,9 +1,23 @@
 ---
+import { Image } from 'astro:assets'
+import LinkIcon from '../../assets/svg/icon/link.svg'
+
 const { pubDate, author, url, title } = Astro.props
+
+const hasLink = url !== '/'
+
+const cn = (hasLink: boolean) => {
+  return hasLink ? 'show-link' : ''
+}
 ---
 
-<div class="moment">
+<div class={`moment ${cn(hasLink)}`}>
   <div class="moment-content">
+    {
+      hasLink && (
+        <Image class="link-icon" width={36} src={LinkIcon} alt="link" />
+      )
+    }
     <section class="moment-info">
       {pubDate.toISOString().slice(0, 10)} @{author}
     </section>
@@ -13,7 +27,7 @@ const { pubDate, author, url, title } = Astro.props
     </section>
   </div>
   <div class="moment-more">
-    <a target="_blank" title="与该动态有关的站外链接" href={url}> 额外信息 </a>
+    <a target="_blank" title="与该动态有关的其他站点" href={url}>更多信息</a>
   </div>
 </div>
 
@@ -23,7 +37,7 @@ const { pubDate, author, url, title } = Astro.props
     margin: 24px 0;
   }
 
-  .moment:hover {
+  .show-link:hover {
     .moment-content {
       transform: translateX(-80px);
     }
@@ -45,9 +59,16 @@ const { pubDate, author, url, title } = Astro.props
   }
 
   .moment-content {
+    position: relative;
     padding: 16px;
     background: linear-gradient(135deg, #525ceb 60%, #000000 60%, #000000 100%);
     transition: 0.3s;
+  }
+
+  .link-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
   }
 
   .moment-body {
