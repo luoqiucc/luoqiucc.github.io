@@ -7,16 +7,17 @@ import PostCard from '../components/PostCard.astro'
 import MomentCard from '../components/moment/MomentCard.astro'
 import MomentWrapper from '../components/moment/MomentWrapper.astro'
 import ProfileCard from '../components/ProfileCard.astro'
+import PikpakAdCard from '../components/ad/PikpakAdCard.astro'
 
 const pageTitle = '落秋cc | 首页'
 
 const posts = await getCollection('posts')
 const moments = await getCollection('moments')
 
-const focusPosts = posts.filter((post) => post.data.isFocus)
-focusPosts.sort((x, y) => {
+posts.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
+const latestPosts = posts.slice(0, 3)
 
 moments.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
@@ -26,7 +27,8 @@ const latestMoments = moments.slice(0, 3)
 
 <Layout pageTitle={pageTitle}>
   <ProfileCard />
-  <PageTitle>动态</PageTitle>
+  <PikpakAdCard />
+  <PageTitle>最新动态</PageTitle>
   <MomentWrapper>
     {
       latestMoments.map(async (moment) => {
@@ -47,9 +49,9 @@ const latestMoments = moments.slice(0, 3)
     <h3 class="all">查看所有动态</h3>
   </a>
 
-  <PageTitle>热门博客</PageTitle>
+  <PageTitle>最新博客</PageTitle>
   {
-    focusPosts.map((post) => (
+    latestPosts.map((post) => (
       <a href={`/posts/${post.id}`}>
         <PostCard
           title={post.data.title}
