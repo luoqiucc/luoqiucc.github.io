@@ -12,6 +12,11 @@ const moments = await getCollection('moments')
 moments.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
+
+// TODO: 暂时隐藏内容
+moments.map((moment) => {
+  moment.body = '内容已隐藏'
+})
 ---
 
 <Layout pageTitle={pageTitle}>

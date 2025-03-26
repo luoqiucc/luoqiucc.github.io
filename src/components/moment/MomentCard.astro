@@ -37,15 +37,11 @@ const cn = (hasLink: boolean) => {
     margin: 24px 0;
   }
 
-  .show-link:hover {
-    .moment-content {
-      transform: translateX(-80px);
-    }
-
-    .moment-more {
-      z-index: 1;
-      opacity: 1;
-    }
+  .moment-content {
+    position: relative;
+    padding: 16px;
+    background: linear-gradient(135deg, #525ceb 60%, #000000 60%, #000000 100%);
+    transition: 0.3s;
   }
 
   .moment-more {
@@ -58,11 +54,15 @@ const cn = (hasLink: boolean) => {
     transition: 0.3s;
   }
 
-  .moment-content {
-    position: relative;
-    padding: 16px;
-    background: linear-gradient(135deg, #525ceb 60%, #000000 60%, #000000 100%);
-    transition: 0.3s;
+  .show-link:hover {
+    .moment-content {
+      transform: translateX(-80px);
+    }
+
+    .moment-more {
+      z-index: 1;
+      opacity: 1;
+    }
   }
 
   .link-icon {
