@@ -23,11 +23,6 @@ moments.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
 const latestMoments = moments.slice(0, 3)
-
-// TODO: 暂时隐藏内容
-latestMoments.map((moment) => {
-  moment.body = '内容已隐藏'
-})
 ---
 
 <Layout pageTitle={pageTitle}>

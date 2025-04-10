@@ -15,7 +15,13 @@ const cn = (hasLink: boolean) => {
   <div class="moment-content">
     {
       hasLink && (
-        <Image class="link-icon" width={36} src={LinkIcon} alt="link" />
+        <Image
+          loading="eager"
+          class="link-icon"
+          width={36}
+          src={LinkIcon}
+          alt="link"
+        />
       )
     }
     <section class="moment-info">

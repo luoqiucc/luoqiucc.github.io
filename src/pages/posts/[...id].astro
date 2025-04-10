@@ -18,7 +18,7 @@ const { entry } = Astro.props
 const { Content } = await render(entry)
 ---
 
-<PostLayout pageTitle={`文章 | ${entry.data.title}`}>
+<PostLayout pageTitle={`博客 | ${entry.data.title}`}>
   <section class="author-date">
     {entry.data.pubDate.toISOString().slice(0, 10)} @{entry.data.author}
   </section>
