@@ -1,14 +1,8 @@
 ---
-import { Image } from 'astro:assets'
-
 const { title, description, tags, pubDate, author, coverUrl } = Astro.props
 ---
 
 <div class="post">
-  <!-- <div class="post-cover">
-    <Image class="post-cover-img" inferSize src={coverUrl} alt="cover" />
-  </div> -->
-
   <div class="post-info">
     <section class="author-date">
       {pubDate.toISOString().slice(0, 10)} @{author}
