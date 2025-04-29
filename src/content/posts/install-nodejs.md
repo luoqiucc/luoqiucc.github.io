@@ -16,3 +16,15 @@ apt-get install nodejs -y
 ```
 
 _以上命令可能需要 sudo_
+
+## 其他
+
+NPM换源
+
+```shell
+# 阿里云
+npm config set registry https://registry.npmmirror.com/
+
+# 腾讯云
+npm config set registry https://mirrors.cloud.tencent.com/npm/
+```
