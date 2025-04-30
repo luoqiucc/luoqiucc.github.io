@@ -1,0 +1,89 @@
+---
+title: '[整活]通过WSL来让你在使用Linux环境的同时可以丝滑的启动原神'
+description: '本文介绍了WSL的安装使用及一些最佳实践'
+pubDate: 2025-04-30
+tags: ['WSL', 'Ubuntu', 'Linux', 'Windows']
+---
+
+多系统工作环境目前解决方案很多，你可以使用虚拟机软件，或是直接为电脑安装多系统。今天来介绍一种可以与Windows很好集成的方式：适用于 Linux 的 Windows 子系统 (WSL)。
+
+首先，相对于虚拟机软件，WSL 更加轻量，并且在未使用时子系统还能够自动暂停以节省系统资源。相对于为电脑安装多系统，WSL 则拥有更好的灵活性，且系统间的切换就像切换软件一样，基本无感。
+
+## 一，安装WSL
+
+### 先决条件
+
+须使用 Windows 10 版本 2004 及更高版本或 Windows 11。
+
+### 安装
+此命令将启用运行 WSL 并安装默认 Linux 的 Ubuntu 发行版所需的功能。
+
+```shell
+wsl --install
+```
+
+_在安装过程中可能会要求你重启计算机，重启后请重新执行该指令_
+
+当然，也可以通过下面的命令修改默认安装
+
+```shell
+# 查询可用的发行版
+wsl --list --online
+
+# 使用该命令安装特定发行版
+wsl --install -d <Distribution Name>
+```
+
+### 设置Linux用户信息
+
+安装完成后，在开始菜单中找到并打开你安装好的发行版系统。首次启动时会要求你创建用户名及密码，完成这些后即可正常使用。
+
+### 额外选项
+
+更新和升级软件包。Windows 不会对其进行自动更新或升级。
+
+```shell
+# 更新并升级软件包
+sudo apt update
+sudo apt upgrade
+```
+
+另外，WSL 与 Windows Terminal 可以很好的配合。每当安装新的 WSL Linux 发行版时，都会在 Windows Terminal 中为其创建一个新实例，你可以方便的对该实例进行自定义，包括外观，快捷指令等。
+
+## 二，与 VS Code 集成
+
+### 配置 Linux 子系统
+
+使用下面的命令来安装 VS Code 服务器所需的库。
+
+```shell
+sudo apt-get update
+sudo apt-get install wget ca-certificates
+```
+
+### 配置 VS Code
+
+打开 VS Code 扩展商店，搜索 [_Remote Development_](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) 扩展并安装。安装完成后，点击 VS Code 左下角的 _打开一个远程窗口_ 按钮，选择 _连接到 WSL_ 即可开始使用你的 Linux 子系统进行开发。
+
+### 快速使用 VS Code 打开项目
+
+直接在你的 Linux 子系统命令行中输入下面的命令，你的 VS Code 便会自动启用远程开发连接到你的 Linux 子系统并打开当前的文件夹。
+
+```shell
+code .
+```
+
+这样，你在开发时的环境就是你的Windows环境，不影响你的Windows应用 ~~_（比如 原神！启动）_~~ ，同时你的 VS Code 已经连接到了你的 Linux 子系统，代码的调试和运行就是一个完整的 Linux 环境中。
+
+## 三，文件存储
+
+官方推荐将文件存储在 WSL 文件系统中，这里我把官方的解释也贴过来。
+
+> For the fastest performance speed, store your files in the WSL file system if you are working on them with Linux tools in a Linux command line (Ubuntu, OpenSUSE, etc). If you're working in a Windows command line (PowerShell, Command Prompt) with Windows tools, store your files in the Windows file system. Files can be accessed across the operating systems, but it may significantly slow down performance.
+
+在这里，你可以直接打开 Windows 资源管理器，在侧边栏中寻找 Linux 选项，在其中找到你安装的 Linux 子系统并打开，在这里进行的更改就存储在 WSL 文件系统中。
+
+## 参考
+- [_Working across file systems | Microsoft Learn_](https://learn.microsoft.com/en-us/windows/wsl/filesystems#file-storage-and-performance-across-file-systems)
+- [_Set up a WSL development environment | Microsoft Learn_](https://learn.microsoft.com/en-us/windows/wsl/setup/environment)
+- [_Install WSL | Microsoft Learn_](https://learn.microsoft.com/en-us/windows/wsl/install)
