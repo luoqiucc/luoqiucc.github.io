@@ -17,7 +17,7 @@ const moments = await getCollection('moments')
 posts.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
-const latestPosts = posts.slice(0, 3)
+const latestPosts = posts.slice(0, 5)
 
 moments.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
