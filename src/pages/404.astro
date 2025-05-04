@@ -1,0 +1,19 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro'
+import MainTitle from '@/components/title/main-title'
+import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
+import { SquareArrowRight } from 'lucide-react'
+
+const title = '落秋cc | 404 NOT FOUND'
+---
+
+<MainLayout title={title}>
+  <MainTitle>404 NOT FOUND</MainTitle>
+  <a href={'/'}>
+    <Button>
+      返回首页 <SquareArrowRight />
+    </Button>
+  </a>
+  <Separator className="my-8" />
+</MainLayout>
