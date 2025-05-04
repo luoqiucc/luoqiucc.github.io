@@ -1,9 +1,9 @@
 ---
-import Layout from './Layout.astro'
+import RootLayout from './RootLayout.astro'
 
-const { pageTitle = '落球cc' } = Astro.props
+const { title = '博客' } = Astro.props
 ---
 
-<Layout pageTitle={pageTitle}>
+<RootLayout title={title}>
   <slot />
-</Layout>
+</RootLayout>

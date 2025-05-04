@@ -1,25 +1,38 @@
-pre {
+.markdown-view pre {
+  margin: 16px 0;
   padding: 16px;
   font-size: 16px;
   line-height: 24px;
+  border-radius: 0.5rem;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+.markdown-view h1,
+.markdown-view h2,
+.markdown-view h3,
+.markdown-view h4,
+.markdown-view h5,
+.markdown-view h6 {
   margin: 24px 0;
+  font-weight: 600;
 }
 
-p,
-li {
-  line-height: 28px;
+.markdown-view h2 {
+  font-size: 1.875rem;
+  line-height: 2.25rem 36px;
+}
+
+.markdown-view h3 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.markdown-view p,
+.markdown-view li {
   font-size: 18px;
+  line-height: 1.75rem;
 }
 
-table {
+.markdown-view table {
   width: 100%;
   table-layout: fixed;
   word-break: break-all;
@@ -28,28 +41,32 @@ table {
   text-align: left;
 }
 
-thead {
+.markdown-view thead {
   color: #ffffff;
-  background-color: #525ceb;
+  background-color: #3b82f6;
 }
 
-td,
-th {
+.markdown-view td,
+.markdown-view th {
   padding: 8px 16px;
 }
 
-tbody>tr:nth-child(even) {
+.markdown-view tbody > tr:nth-child(even) {
   background-color: rgb(228, 228, 228);
 }
 
-tbody>tr:nth-child(odd) {
+.markdown-view tbody > tr:nth-child(odd) {
   background-color: rgb(247, 247, 247);
 }
 
-blockquote {
-  margin: 0;
-  padding: 1px 16px;
-  border-left: 8px solid #525ceb;
-  background-color: #f0f0f0;
+.markdown-view blockquote {
+  margin: 16px;
+  padding: 0 16px;
+  border-left: 8px solid #3b82f6;
+  font-style: italic;
+}
+
+.markdown-view a {
+  color: #3b82f6;
   font-style: italic;
 }

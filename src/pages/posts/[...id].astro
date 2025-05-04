@@ -1,9 +1,13 @@
 ---
 import { getCollection, render } from 'astro:content'
+import { Contact } from 'lucide-react'
 
-import MarkdownView from '../../components/MarkdownView.astro'
-import PostLayout from '../../layouts/PostLayout.astro'
-import Utterances from '../../components/Utterances.astro'
+import PostLayout from '@/layouts/PostLayout.astro'
+import MainTitle from '@/components/title/main-title'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
+import { badgeVariants } from '@/components/ui/badge'
+import MarkdownView from '@/components/MarkdownView.astro'
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts')
@@ -18,56 +22,34 @@ const { entry } = Astro.props
 const { Content } = await render(entry)
 ---
 
-<PostLayout pageTitle={`博客 | ${entry.data.title}`}>
-  <section class="author-date">
+<PostLayout title={`博客 | ${entry.data.title}`}>
+  <div class="flex items-center text-primary my-4">
+    <Contact size={20} className="mr-2" />
     {entry.data.pubDate.toISOString().slice(0, 10)} @{entry.data.author}
-  </section>
-  <h1 class="title">{entry.data.title}</h1>
-  <section class="tags">
+  </div>
+  <div class="my-4">
+    <MainTitle>
+      {entry.data.title}
+    </MainTitle>
+  </div>
+  <p class="text-xl text-muted-foreground my-4">
+    {entry.data.description}
+  </p>
+  <div class="my-4">
     {
-      entry.data.tags.map((tag: string) => (
-        <a href={`/tags/${tag}`}>
-          <section class="tag-item">{tag}</section>
+      entry.data.tags.map((tag) => (
+        <a
+          href={`/tags/${tag}`}
+          class={cn(badgeVariants({ variant: 'secondary' }), 'mr-2')}
+        >
+          {tag}
         </a>
       ))
     }
-  </section>
+  </div>
+  <Separator className="my-8" />
   <MarkdownView>
     <Content />
   </MarkdownView>
-  <div class="line"></div>
-  <Utterances />
+  <Separator className="my-8" />
 </PostLayout>
-
-<style>
-  .author-date {
-    margin-top: 48px;
-    font-size: 16px;
-    font-style: italic;
-    color: #525ceb;
-  }
-
-  .title {
-    margin: 16px 0;
-    font-size: 36px;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    padding-bottom: 24px;
-    border-bottom: 1px solid rgb(224, 224, 224);
-  }
-
-  .tag-item {
-    padding: 4px 6px;
-    margin: 4px;
-    font-size: 12px;
-    background-color: #bfcfe7;
-    color: black;
-  }
-
-  .line {
-    border-bottom: 1px solid rgb(224, 224, 224);
-  }
-</style>

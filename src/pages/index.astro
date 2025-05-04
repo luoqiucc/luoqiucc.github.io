@@ -1,15 +1,15 @@
 ---
 import { getCollection } from 'astro:content'
+import { Button, buttonVariants } from '@/components/ui/button'
 
-import Layout from '../layouts/Layout.astro'
-import PageTitle from '../components/typography/PageTitle.astro'
-import PostCard from '../components/PostCard.astro'
-import MomentCard from '../components/moment/MomentCard.astro'
-import MomentWrapper from '../components/moment/MomentWrapper.astro'
-import ProfileCard from '../components/ProfileCard.astro'
-import PikpakAdCard from '../components/ad/PikpakAdCard.astro'
+import MainLayout from '@/layouts/MainLayout.astro'
+import AboutMe from '@/components/about/about-me'
+import PostCard from '@/components/post/post-card'
+import MomentCard from '@/components/moment/moment-card'
+import MainTitle from '@/components/title/main-title'
+import { SquareArrowRight } from 'lucide-react'
 
-const pageTitle = '落秋cc | 首页'
+const title = '落秋cc | 首页'
 
 const posts = await getCollection('posts')
 const moments = await getCollection('moments')
@@ -25,54 +25,46 @@ moments.sort((x, y) => {
 const latestMoments = moments.slice(0, 3)
 ---
 
-<Layout pageTitle={pageTitle}>
-  <ProfileCard />
-  <PikpakAdCard />
-  <PageTitle>最新动态</PageTitle>
-  <MomentWrapper>
-    {
-      latestMoments.map(async (moment) => {
-        return (
-          <MomentCard
-            pubDate={moment.data.pubDate}
-            author={moment.data.author}
-            url={moment.data.url}
-            title={moment.data.title}
-          >
-            {moment.body}
-          </MomentCard>
-        )
-      })
-    }
-  </MomentWrapper>
-  <a href="/moments">
-    <h3 class="all">查看所有动态</h3>
-  </a>
+<MainLayout title={title}>
+  <AboutMe />
 
-  <PageTitle>最新博客</PageTitle>
+  <MainTitle>最新动态</MainTitle>
   {
-    latestPosts.map((post) => (
-      <a href={`/posts/${post.id}`}>
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          tags={post.data.tags}
-          pubDate={post.data.pubDate}
-          author={post.data.author}
-          coverUrl={post.data.coverUrl}
-        />
-      </a>
+    latestMoments.map((moment) => (
+      <MomentCard
+        url={moment.data.url}
+        title={moment.data.title}
+        pubDate={moment.data.pubDate}
+        author={moment.data.author}
+      >
+        {moment.body}
+      </MomentCard>
     ))
   }
-  <a href="/posts/1">
-    <h3 class="all">查看所有博客</h3>
+  <a href={'/moments'}>
+    <Button>
+      所有动态 <SquareArrowRight />
+    </Button>
   </a>
-</Layout>
 
-<style>
-  .all {
-    margin: 24px 0;
-    font-size: 16px;
-    color: #525ceb;
+  <div class="h-16 w-full"></div>
+
+  <MainTitle>最新博客</MainTitle>
+  {
+    latestPosts.map((post) => (
+      <PostCard
+        title={post.data.title}
+        description={post.data.description}
+        id={post.id}
+        tags={post.data.tags}
+        pubDate={post.data.pubDate}
+        author={post.data.author}
+      />
+    ))
   }
-</style>
+  <a href={'/posts/1'}>
+    <Button>
+      所有博客 <SquareArrowRight />
+    </Button>
+  </a>
+</MainLayout>

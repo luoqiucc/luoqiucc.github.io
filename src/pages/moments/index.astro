@@ -1,12 +1,12 @@
 ---
 import { getCollection } from 'astro:content'
 
-import Layout from '../../layouts/Layout.astro'
-import PageTitle from '../../components/typography/PageTitle.astro'
-import MomentWrapper from '../../components/moment/MomentWrapper.astro'
-import MomentCard from '../../components/moment/MomentCard.astro'
+import MainLayout from '@/layouts/MainLayout.astro'
+import MomentCard from '@/components/moment/moment-card'
+import MainTitle from '@/components/title/main-title'
+import { Separator } from '@/components/ui/separator'
 
-const pageTitle = '落秋cc | 动态'
+const title = '落秋cc | 动态'
 
 const moments = await getCollection('moments')
 moments.sort((x, y) => {
@@ -14,22 +14,19 @@ moments.sort((x, y) => {
 })
 ---
 
-<Layout pageTitle={pageTitle}>
-  <PageTitle>动态</PageTitle>
-  <MomentWrapper>
-    {
-      moments.map(async (moment) => {
-        return (
-          <MomentCard
-            pubDate={moment.data.pubDate}
-            author={moment.data.author}
-            url={moment.data.url}
-            title={moment.data.title}
-          >
-            {moment.body}
-          </MomentCard>
-        )
-      })
-    }
-  </MomentWrapper>
-</Layout>
+<MainLayout title={title}>
+  <MainTitle>动态</MainTitle>
+  {
+    moments.map((moment) => (
+      <MomentCard
+        url={moment.data.url}
+        title={moment.data.title}
+        pubDate={moment.data.pubDate}
+        author={moment.data.author}
+      >
+        {moment.body}
+      </MomentCard>
+    ))
+  }
+  <Separator className="my-8" />
+</MainLayout>
