@@ -29,6 +29,7 @@ export default function PostCard(props: Props) {
         <div className="my-4">
           {props.tags.map((tag) => (
             <a
+              key={tag}
               href={`/tags/${tag}`}
               className={cn(badgeVariants({ variant: 'secondary' }), 'mr-2')}
             >
