@@ -5,7 +5,7 @@ import { ModeToggle } from '../ModeToggle'
 
 export default function Nav() {
   return (
-    <div className="flex flex-1 flex-col gap-4 px-4">
+    <div className="flex flex-1 flex-col gap-4 px-4 bg-muted/50">
       <div className="mx-auto w-full max-w-5xl h-16 flex items-center justify-between">
         <div className="flex items-center">
           <a href="/" className={buttonVariants({ variant: 'ghost' })}>

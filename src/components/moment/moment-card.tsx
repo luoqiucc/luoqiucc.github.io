@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { MessageSquareText } from 'lucide-react'
+import { LampDesk } from 'lucide-react'
 
 interface Props {
   title: string
@@ -12,13 +12,13 @@ interface Props {
 export default function MomentCard(props: Props) {
   return (
     <Alert className="my-4">
-      <MessageSquareText className="h-4 w-4" />
-      <AlertDescription>
+      <LampDesk className="h-4 w-4" />
+      <AlertTitle className="text-muted-foreground">
         {props.pubDate.toISOString().slice(0, 10)}
-      </AlertDescription>
-      <AlertTitle className="py-2">
-        <b>{props.children}</b>
       </AlertTitle>
+      <AlertDescription className="py-2 text-foreground">
+        <b>{props.children}</b>
+      </AlertDescription>
     </Alert>
   )
 }
