@@ -7,7 +7,7 @@ import MainTitle from '@/components/title/main-title'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { badgeVariants } from '@/components/ui/badge'
-import MarkdownView from '@/components/MarkdownView.astro'
+import MarkdownLayout from '@/layouts/MarkdownLayout.astro'
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts')
@@ -48,8 +48,8 @@ const { Content } = await render(entry)
     }
   </div>
   <Separator className="my-8" />
-  <MarkdownView>
+  <MarkdownLayout>
     <Content />
-  </MarkdownView>
+  </MarkdownLayout>
   <Separator className="my-8" />
 </PostLayout>
