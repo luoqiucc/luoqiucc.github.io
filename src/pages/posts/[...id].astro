@@ -1,13 +1,14 @@
 ---
 import { getCollection, render } from 'astro:content'
 import { Contact } from 'lucide-react'
-
-import PostLayout from '@/layouts/PostLayout.astro'
-import MainTitle from '@/components/title/main-title'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { badgeVariants } from '@/components/ui/badge'
+
+import MainTitle from '@/components/title/main-title'
+import PostLayout from '@/layouts/PostLayout.astro'
 import MarkdownLayout from '@/layouts/MarkdownLayout.astro'
+import Utterances from '@/components/comment/Utterances'
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts')
@@ -52,4 +53,5 @@ const { Content } = await render(entry)
     <Content />
   </MarkdownLayout>
   <Separator className="my-8" />
+  <Utterances />
 </PostLayout>
