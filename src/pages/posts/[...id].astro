@@ -24,29 +24,31 @@ const { Content } = await render(entry)
 ---
 
 <PostLayout title={`博客 | ${entry.data.title}`}>
-  <div class="flex items-center text-primary my-4">
-    <Contact size={20} className="mr-2" />
-    {entry.data.pubDate.toISOString().slice(0, 10)} @{entry.data.author}
-  </div>
-  <div class="my-4">
-    <MainTitle>
-      {entry.data.title}
-    </MainTitle>
-  </div>
-  <p class="text-xl text-muted-foreground my-4">
-    {entry.data.description}
-  </p>
-  <div class="my-4">
-    {
-      entry.data.tags.map((tag) => (
-        <a
-          href={`/tags/${tag}`}
-          class={cn(badgeVariants({ variant: 'secondary' }), 'mr-2')}
-        >
-          {tag}
-        </a>
-      ))
-    }
+  <div>
+    <div class="flex items-center text-primary my-4">
+      <Contact size={20} className="mr-2" />
+      {entry.data.pubDate.toISOString().slice(0, 10)} @{entry.data.author}
+    </div>
+    <div class="my-4">
+      <MainTitle>
+        {entry.data.title}
+      </MainTitle>
+    </div>
+    <p class="text-xl text-muted-foreground my-4">
+      {entry.data.description}
+    </p>
+    <div class="my-4">
+      {
+        entry.data.tags.map((tag) => (
+          <a
+            href={`/tags/${tag}`}
+            class={cn(badgeVariants({ variant: 'secondary' }), 'mr-2')}
+          >
+            {tag}
+          </a>
+        ))
+      }
+    </div>
   </div>
   <Separator className="my-8" />
   <MarkdownLayout>
