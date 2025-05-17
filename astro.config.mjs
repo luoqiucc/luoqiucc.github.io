@@ -15,6 +15,10 @@ export default defineConfig({
     host: true,
   },
 
+  image: {
+    domains: ['https://img.picui.cn'],
+  },
+
   vite: {
     plugins: [tailwindcss()],
   },

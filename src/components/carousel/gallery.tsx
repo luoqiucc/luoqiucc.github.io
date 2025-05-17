@@ -29,6 +29,7 @@ export default function CarouselSize(props: Props) {
                 <img
                   src={url}
                   className="w-full h-full object-cover rounded-xl"
+                  alt="image"
                 />
               </CardContent>
             </Card>
