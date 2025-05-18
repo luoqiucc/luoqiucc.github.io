@@ -15,7 +15,7 @@ export default function Image({
 }: Props) {
   return (
     <div>
-      <AspectRatio ratio={ratio}>
+      <AspectRatio ratio={ratio} className="bg-muted rounded-md">
         <img
           src={url}
           alt={description}

@@ -11,7 +11,7 @@ interface Props {
 
 export default function MomentCard(props: Props) {
   return (
-    <Alert className="my-4">
+    <Alert>
       <LampDesk className="h-4 w-4" />
       <AlertTitle className="text-muted-foreground">
         {props.pubDate.toISOString().slice(0, 10)}

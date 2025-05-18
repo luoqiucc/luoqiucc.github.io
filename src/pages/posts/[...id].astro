@@ -9,6 +9,7 @@ import MainTitle from '@/components/title/main-title'
 import PostLayout from '@/layouts/PostLayout.astro'
 import MarkdownLayout from '@/layouts/MarkdownLayout.astro'
 import Utterances from '@/components/comment/Utterances'
+import TencentCloudAD from '@/components/ad/tencent-cloud-ad'
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts')
@@ -56,4 +57,5 @@ const { Content } = await render(entry)
   </MarkdownLayout>
   <Separator className="my-8" />
   <Utterances />
+  <TencentCloudAD />
 </PostLayout>

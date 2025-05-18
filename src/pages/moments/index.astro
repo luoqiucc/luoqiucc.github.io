@@ -15,16 +15,18 @@ moments.sort((x, y) => {
 
 <MainLayout title={title}>
   <MainTitle>动态</MainTitle>
-  {
-    moments.map((moment) => (
-      <MomentCard
-        url={moment.data.url}
-        title={moment.data.title}
-        pubDate={moment.data.pubDate}
-        author={moment.data.author}
-      >
-        {moment.body}
-      </MomentCard>
-    ))
-  }
+  <div class="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+    {
+      moments.map((moment) => (
+        <MomentCard
+          url={moment.data.url}
+          title={moment.data.title}
+          pubDate={moment.data.pubDate}
+          author={moment.data.author}
+        >
+          {moment.body}
+        </MomentCard>
+      ))
+    }
+  </div>
 </MainLayout>

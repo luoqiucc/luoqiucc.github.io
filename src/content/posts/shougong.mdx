@@ -6,32 +6,22 @@ tags: ['手工', '日常', '整活']
 ---
 
 import AlertDestructive from '@/components/alert/destructive-alert'
-import Gallery from '@/components/carousel/gallery'
+import Image from '@/components/md/image'
 
 感觉仁菜的二创挺好玩的，今天咱也来做一个。
 
 ## 一，准备素材
 
-网上的图片都挺糊的，咱们就利用浏览器的开发者工具来现场做一张。这里我直接打开微博的官方网站随便找了个用户，咱们就在他的基础上修改成咱们需要的内容，就像下面这样修改页面元素中的内容
+网上的图片都挺糊的，咱们就利用浏览器的开发者工具来现场做一张。这里我直接打开微博的官方网站随便找了个用户，咱们就在他的基础上修改成咱们需要的内容，就像下面这样修改页面元素中的内容。内容修改完成后截图打印，下面是我打好的一些，尺寸是10cm*15cm
 
 <AlertDestructive>
   该操作切勿用于违法活动
 </AlertDestructive>
 
-<img
-  class="my-8 w-max-3xl"
-  src={'https://img.picui.cn/free/2025/05/05/6818ba776455c.png'}
-  alt="weibo"
-/>
-
-内容修改完成后截图打印，下面是我打好的一些，尺寸是10cm*15cm
-
-<img
-  class="my-8 mx-auto"
-  src={'https://img.picui.cn/free/2025/05/05/6818baa28f4e5.png'}
-  width={260}
-  alt="pic"
-/>
+<div class="my-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <Image url="https://img.picui.cn/free/2025/05/05/6818ba776455c.png" description="修改页面内容"/>
+    <Image url="https://img.picui.cn/free/2025/05/05/6818baa28f4e5.png" description="打印"/>
+</div>
 
 ## 二，制作画框
 
@@ -41,38 +31,34 @@ import Gallery from '@/components/carousel/gallery'
 
 尺寸在上一节咱们已经确定好了，长15cm，宽10cm，量好以后使用切角机切割即可。另外，在正式切割之前我先来校准一下限位器的角度，工匠精神😤。
 
-<Gallery 
-  imgUrl={[
-    'https://img.picui.cn/free/2025/05/05/6818baa274f15.png',
-    'https://img.picui.cn/free/2025/05/05/6818ba7705a47.png',
-    'https://img.picui.cn/free/2025/05/05/6818ba90d74de.png',
-    'https://img.picui.cn/free/2025/05/05/6818ba7707cde.png',
-  ]} 
-  client:load
-/>
+<div class="my-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <Image url="https://img.picui.cn/free/2025/05/05/6818baa274f15.png" description="校准角度"/>
+    <Image url="https://img.picui.cn/free/2025/05/05/6818ba7705a47.png" description="校准角度"/>
+    <Image url="https://img.picui.cn/free/2025/05/05/6818ba90d74de.png" description="切割框条"/>
+    <Image url="https://img.picui.cn/free/2025/05/05/6818ba7707cde.png" description="完成"/>
+</div>
 
-下一步，使用订角机拼接切割好的边框。完成后根据画框的尺寸制作内衬，这其实就是一张普通的KT版，主要起支撑作用，具体的尺寸需要能刚好放到你的画框里。
+下一步，使用订角机拼接切割好的边框。
 
-<Gallery 
-  imgUrl={[
-    'https://img.picui.cn/free/2025/05/05/6818baa266c40.png',
-    'https://img.picui.cn/free/2025/05/05/6818baa254d70.png',
-    'https://img.picui.cn/free/2025/05/05/6818ba90e90b3.png',
-  ]} 
-  client:load
-/>
+<div class="my-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <Image url="https://img.picui.cn/free/2025/05/05/6818baa266c40.png" description="拼接边框"/>
+    <Image url="https://img.picui.cn/free/2025/05/05/6818baa254d70.png" description="完成"/>
+</div>
+
+完成后根据画框的尺寸制作内衬，这其实就是一张普通的KT版，主要起支撑作用，具体的尺寸需要能刚好放到你的画框里。
+
+<div class="my-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <Image url="https://img.picui.cn/free/2025/05/05/6818ba90e90b3.png" description="内衬"/>
+</div>
 
 ## 三，组装
 
 依次将画片，内衬放入画框并使用片钉枪固定。
 
-<Gallery 
-  imgUrl={[
-    'https://img.picui.cn/free/2025/05/05/6818ba916dfa0.png',
-    'https://img.picui.cn/free/2025/05/05/6818ba76dd465.png',
-    'https://img.picui.cn/free/2025/05/05/6818ba90e3a0b.png',
-  ]} 
-  client:load
-/>
+<div class="my-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <Image url="https://img.picui.cn/free/2025/05/05/6818ba916dfa0.png" description="使用片钉枪固定"/>
+    <Image url="https://img.picui.cn/free/2025/05/05/6818ba76dd465.png" description="完成"/>
+    <Image url="https://img.picui.cn/free/2025/05/05/6818ba90e3a0b.png" description="完成"/>
+</div>
 
 最后，虽然一点正经事没干，但还是幸苦我自己了🤣👍。
