@@ -2,9 +2,10 @@ import MyGO from '@/assets/images/mygo/logo_mygo.png'
 
 export default function AboutMe() {
   return (
-    <div className="pt-16 pb-24">
+    <div className="pt-20 pb-28">
+      {/* <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"></h1> */}
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl flex items-center">
-        " 世界就是一个巨大的
+        世界就是一个巨大的
         <img width={160} src={MyGO.src} alt="mygo" className="ml-4" />
       </h1>
       <br />
