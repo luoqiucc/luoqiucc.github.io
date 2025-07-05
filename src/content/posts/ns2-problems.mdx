@@ -1,0 +1,97 @@
+---
+title: 'NS2(ns-2.35)常见问题总结'
+description: '记录一下NS2安装过程中遇到的一些问题及其解决方案，包括gcc降级，关键依赖的安装'
+pubDate: 2025-07-05
+tags: ['NS2', '计算机网络', 'Linux', 'Ubuntu']
+---
+import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+<Alert variant="default">
+  <AlertCircleIcon />
+  <AlertTitle>注意操作系统版本</AlertTitle>
+  <AlertDescription>
+    这里我使用的操作系统为 <b>Ubuntu 20.04</b> 
+  </AlertDescription>
+</Alert>
+
+## 一，gcc/g++降级
+
+新增软件源，在文件 **_/etc/apt/sources.list_** 的末尾新增以下内容
+
+```shell
+deb http://dk.archive.ubuntu.com/ubuntu/ xenial main
+deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe
+```
+
+更新软件源
+
+```shell
+sudo apt update
+```
+
+安装所需的版本，这里我以gcc/g++ 4.8为例
+
+```shell
+# 安装gcc 4.8
+sudo apt install gcc-4.8
+
+# 安装g++ 4.8
+sudo apt install g++-4.8
+```
+
+调整版本优先级
+
+```shell
+# 调整gcc的版本优先级
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 1
+# 调整g++的版本优先级
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 1
+```
+
+选择默认编辑器
+
+```shell
+# 调整默认使用的gcc版本
+sudo update-alternatives --config gcc
+# 调整默认使用的g++版本
+sudo update-alternatives --config g++
+```
+
+## 二，其他常见问题
+
+### 1.缺少libx11-dev
+
+问题表现
+
+```shell
+# 找不到头文件 <X11/Xlib.h>
+error: X11/Xlib.h: No such file or directory
+
+...
+
+make: *** [MakeFile:908: tk3d.0] Error 1
+tk8.5.10 make failed! Exiting ...
+```
+
+解决方案
+```shell
+# 安装 libx11-dev
+sudo apt-get install libx11-dev
+```
+
+### 2.缺少libxt-dev
+
+问题表现
+
+```shell
+# otcl-1.14配置失败
+can't find X includes
+otcl-1.14 configuration failed! Exiting ...
+```
+
+解决方案
+```shell
+# 安装 libxt-dev
+sudo apt-get install libxt-dev
+```
