@@ -63,3 +63,19 @@
   color: var(--color-primary);
   font-style: italic;
 }
+
+@counter-style circled-num {
+  /* system: fixed; */
+  /* symbols: ① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩; */
+  /* suffix: ' '; */
+}
+
+.markdown-view ol > li {
+  list-style: decimal;
+  margin-left: 26px;
+}
+
+.markdown-view ul > li {
+  list-style: circle;
+  margin-left: 26px;
+}
