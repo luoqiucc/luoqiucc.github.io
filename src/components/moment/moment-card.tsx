@@ -18,6 +18,11 @@ export default function MomentCard(props: Props) {
       </AlertTitle>
       <AlertDescription className="py-2 text-foreground">
         <b>{props.children}</b>
+        {props.title != '无题' && (
+          <div className="pt-2 text-muted-foreground italic">
+            # {props.title}
+          </div>
+        )}
       </AlertDescription>
     </Alert>
   )
