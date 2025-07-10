@@ -1,8 +1,10 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { LampDesk } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 interface Props {
   title: string
+  topics: String[]
   pubDate: Date
   author: string
   url: string
@@ -18,11 +20,13 @@ export default function MomentCard(props: Props) {
       </AlertTitle>
       <AlertDescription className="py-2 text-foreground">
         <b>{props.children}</b>
-        {props.title != '无题' && (
-          <div className="pt-2 text-muted-foreground italic">
-            # {props.title}
-          </div>
-        )}
+        <div className="pt-2 italic flex w-full flex-wrap gap-2">
+          {props.topics.map((topic, index) => (
+            <Badge key={index} variant="ghost">
+              #{topic}
+            </Badge>
+          ))}
+        </div>
       </AlertDescription>
     </Alert>
   )

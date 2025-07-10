@@ -14,6 +14,7 @@ export const postSchema = z.object({
 
 export const momentSchema = z.object({
   title: z.string().default('无题'),
+  topic: z.array(z.string()).default([]),
   pubDate: z.date(),
   author: z.string().default('落秋cc'),
   url: z.string().default('/'),

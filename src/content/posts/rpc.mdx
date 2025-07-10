@@ -4,6 +4,7 @@ description: '来聊聊RPC的概念与基本流程'
 pubDate: 2025-07-08
 tags: ['RPC', '计算机网络']
 ---
+import Image from '@/components/md/image'
 
 ## 一，RPC的定义
 RPC（Remote Procedure Call，远程过程调用）是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一个地址空间（通常为一个开放网络的一台计算机）的子程序，而程序员就像调用本地程序一样，无需关注具体网络通信的细节。这里我简单补充一下如果没有RPC的传统做法是怎么做的，假设现在我们有两个服务，服务A和服务B且他们在两台计算机上，那么服务A在调用服务B时我们可以构建一个http请求去告诉服务B我现在需要你帮助我处理一些事情，服务B在处理完成后将结果通过http返回给服务A，而RPC就是帮我们掩盖了发起http请求或是其他网络通信的过程。
@@ -17,5 +18,8 @@ RPC（Remote Procedure Call，远程过程调用）是一个计算机通信协�
 4. 服务B收到该数据后，通过反序列化（unmarshalling）获取实际内容，并调用自身具体的服务函数
 5. 函数执行完毕后将结果序列化并通过网络返回
 6. 服务A的Stub收到后反序列化，返回结果
+<br/>
+<Image url="https://img.picui.cn/free/2025/07/10/686f90c6df055.png" description="RPC的基本流程" ratio={8 / 3}/>
+
 ### 2.RPC的底层通信部分
 关于这个问题不同的RPC框架有不同的底层实现。例如Open Network Computing Remote Procedure Call（ONC RPC）底层为TCP/IP协议，谷歌公司的gRPC则是基于HTTP/2协议传输数据。
