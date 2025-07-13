@@ -20,13 +20,15 @@ export default function MomentCard(props: Props) {
       </AlertTitle>
       <AlertDescription className="py-2 text-foreground">
         <b>{props.children}</b>
-        <div className="pt-2 italic flex w-full flex-wrap gap-2">
-          {props.topics.map((topic, index) => (
-            <Badge key={index} variant="ghost">
-              #{topic}
-            </Badge>
-          ))}
-        </div>
+        {props.topics.length != 0 && (
+          <div className="pt-2 italic flex w-full flex-wrap gap-2 overflow-hidden">
+            {props.topics.map((topic, index) => (
+              <Badge key={index} variant="ghost">
+                #{topic}
+              </Badge>
+            ))}
+          </div>
+        )}
       </AlertDescription>
     </Alert>
   )
