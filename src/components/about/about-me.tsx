@@ -5,8 +5,9 @@ export default function AboutMe() {
     <div className="pt-20 pb-28">
       {/* <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"></h1> */}
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl flex items-center">
-        世界就是一个巨大的
-        <img width={160} src={MyGO.src} alt="mygo" className="ml-4" />
+        {/* 世界就是一个巨大的
+        <img width={160} src={MyGO.src} alt="mygo" className="ml-4" /> */}
+        ( ●'◡'● ) ( ^///^ )
       </h1>
       <br />
       <div className="flex">

@@ -12,7 +12,7 @@ export default function TencentCloudAD() {
           <AspectRatio ratio={16 / 9} className="bg-muted rounded-md">
             <img
               className="w-full h-full rounded-md object-cover"
-              src="https://img.picui.cn/free/2025/05/18/682947edc4eed.png"
+              src="https://free.picui.cn/free/2025/05/18/682947edc4eed.png"
               alt="tencent cloud"
             />
           </AspectRatio>
@@ -26,7 +26,7 @@ export default function TencentCloudAD() {
           <AspectRatio ratio={16 / 9} className="bg-muted rounded-md">
             <img
               className="w-full h-full rounded-md object-cover"
-              src="https://img.picui.cn/free/2025/05/18/68294e9e6a6c3.png"
+              src="https://free.picui.cn/free/2025/05/18/68294e9e6a6c3.png"
               alt="tencent cloud"
             />
           </AspectRatio>
@@ -40,7 +40,7 @@ export default function TencentCloudAD() {
           <AspectRatio ratio={16 / 9} className="bg-muted rounded-md">
             <img
               className="w-full h-full rounded-md object-cover"
-              src="https://img.picui.cn/free/2025/05/18/6829555f7a3d8.png"
+              src="https://free.picui.cn/free/2025/05/18/6829555f7a3d8.png"
               alt="tencent cloud"
             />
           </AspectRatio>
