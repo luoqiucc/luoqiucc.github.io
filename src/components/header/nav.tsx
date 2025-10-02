@@ -56,13 +56,15 @@ export default function Nav({ banner, post }: Props) {
       <div className="w-full relative">
         {JSON.stringify(post) == '{}' ? (
           <img
-            className="h-full w-full object-cover absolute -z-9"
+            className="h-full w-full object-cover absolute -z-9 bg-primary"
             src="https://free.picui.cn/free/2025/10/02/68de66a3bdf22.png"
+            alt="Banner"
           />
         ) : (
           <img
             className="h-full w-full object-cover absolute -z-9"
             src={post.coverUrl}
+            alt="Banner"
           />
         )}
         <div className="px-4 py-10">
