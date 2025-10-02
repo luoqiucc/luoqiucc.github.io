@@ -1,9 +1,9 @@
 ---
 import RootLayout from './RootLayout.astro'
 
-const { title = '落秋cc' } = Astro.props
+const { title, banner } = Astro.props
 ---
 
-<RootLayout title={title}>
+<RootLayout title={title} banner={banner}>
   <slot />
 </RootLayout>

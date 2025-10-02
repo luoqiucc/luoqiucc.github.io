@@ -3,10 +3,7 @@ import { getCollection } from 'astro:content'
 
 import MainLayout from '@/layouts/MainLayout.astro'
 import PostCard from '@/components/post/post-card'
-import MainTitle from '@/components/title/main-title'
 import BlogPagination from '@/components/pagination/blog-pagination'
-
-const title = '落秋cc | 博客'
 
 export async function getStaticPaths({ paginate }) {
   const posts = await getCollection('posts')
@@ -18,10 +15,15 @@ export async function getStaticPaths({ paginate }) {
 }
 
 const { page } = Astro.props
+
+const title = '落秋cc | 博客'
+const banner = {
+  title: '博客',
+  description: '期待可以有所帮助...',
+}
 ---
 
-<MainLayout title={title}>
-  <MainTitle>博客</MainTitle>
+<MainLayout title={title} banner={banner}>
   {
     page.data.map((post) => (
       <PostCard

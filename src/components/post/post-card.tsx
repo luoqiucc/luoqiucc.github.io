@@ -15,7 +15,7 @@ interface Props {
 export default function PostCard(props: Props) {
   return (
     <a href={`/posts/${props.id}`}>
-      <div className="my-8">
+      <div>
         <div className="flex items-center text-primary">
           <Contact size={20} className="mr-2" />
           {props.pubDate.toISOString().slice(0, 10)} @{props.author}

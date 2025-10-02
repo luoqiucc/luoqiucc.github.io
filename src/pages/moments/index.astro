@@ -5,15 +5,19 @@ import MainLayout from '@/layouts/MainLayout.astro'
 import MomentCard from '@/components/moment/moment-card'
 import MainTitle from '@/components/title/main-title'
 
-const title = '落秋cc | 动态'
-
 const moments = await getCollection('moments')
 moments.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
+
+const title = '落秋cc | 动态'
+const banner = {
+  title: '动态',
+  description: '一些碎碎念...',
+}
 ---
 
-<MainLayout title={title}>
+<MainLayout title={title} banner={banner}>
   <MainTitle>动态</MainTitle>
   <div class="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     {

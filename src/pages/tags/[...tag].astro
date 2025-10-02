@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content'
 
 import MainLayout from '@/layouts/MainLayout.astro'
 import PostCard from '@/components/post/post-card'
-import MainTitle from '@/components/title/main-title'
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts')
@@ -25,10 +24,15 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params
 const { posts } = Astro.props
+
+const title = `标签 | ${tag}`
+const banner = {
+  title: `标签: ${tag}`,
+  description: `带有 ${tag} 标签的文章`,
+}
 ---
 
-<MainLayout title={`标签 | ${tag}`}>
-  <MainTitle>{`标签: ${tag}`}</MainTitle>
+<MainLayout title={title} banner={banner}>
   {
     posts.map((post) => (
       <PostCard

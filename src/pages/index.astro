@@ -4,14 +4,11 @@ import { Button } from '@/components/ui/button'
 import { SquareArrowRight } from 'lucide-react'
 
 import MainLayout from '@/layouts/MainLayout.astro'
-import AboutMe from '@/components/about/about-me'
 import PostCard from '@/components/post/post-card'
 import MomentCard from '@/components/moment/moment-card'
 import MainTitle from '@/components/title/main-title'
 import PikpakAD from '@/components/ad/pikpak-ad'
 import TencentCloudAD from '@/components/ad/tencent-cloud-ad'
-
-const title = '落秋cc | 首页'
 
 const posts = await getCollection('posts')
 const moments = await getCollection('moments')
@@ -25,11 +22,15 @@ moments.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
 const latestMoments = moments.slice(0, 4)
+
+const title = '落秋cc | 首页'
+const banner = {
+  title: 'Hi ! 👋',
+  description: '我们所经历的每个平凡的日常，也许就是连续发生的奇迹。',
+}
 ---
 
-<MainLayout title={title}>
-  <AboutMe />
-
+<MainLayout title={title} banner={banner}>
   <MainTitle>最新动态</MainTitle>
   <div class="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     {
@@ -56,18 +57,21 @@ const latestMoments = moments.slice(0, 4)
   <PikpakAD />
 
   <MainTitle>最新博客</MainTitle>
-  {
-    latestPosts.map((post) => (
-      <PostCard
-        title={post.data.title}
-        description={post.data.description}
-        id={post.id}
-        tags={post.data.tags}
-        pubDate={post.data.pubDate}
-        author={post.data.author}
-      />
-    ))
-  }
+  <div class="my-4">
+    {
+      latestPosts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          id={post.id}
+          tags={post.data.tags}
+          pubDate={post.data.pubDate}
+          author={post.data.author}
+        />
+      ))
+    }
+  </div>
+
   <a href={'/posts/1'}>
     <Button>
       更多博客 <SquareArrowRight />

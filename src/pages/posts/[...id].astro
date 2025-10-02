@@ -1,11 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content'
-import { Contact } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
-import { badgeVariants } from '@/components/ui/badge'
 
-import MainTitle from '@/components/title/main-title'
 import PostLayout from '@/layouts/PostLayout.astro'
 import MarkdownLayout from '@/layouts/MarkdownLayout.astro'
 import Utterances from '@/components/comment/Utterances'
@@ -22,40 +18,27 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { Content } = await render(entry)
+
+const title = `博客 | ${entry.data.title}`
+const post = {
+  title: entry.data.title,
+  pubDate: entry.data.pubDate,
+  author: entry.data.author,
+  description: entry.data.description,
+  coverUrl: entry.data.coverUrl,
+  tags: entry.data.tags,
+}
 ---
 
-<PostLayout title={`博客 | ${entry.data.title}`}>
-  <div>
-    <div class="flex items-center text-primary my-4">
-      <Contact size={20} className="mr-2" />
-      {entry.data.pubDate.toISOString().slice(0, 10)} @{entry.data.author}
-    </div>
-    <div class="my-4">
-      <MainTitle>
-        {entry.data.title}
-      </MainTitle>
-    </div>
-    <p class="text-xl text-muted-foreground my-4">
-      {entry.data.description}
-    </p>
-    <div class="my-4">
-      {
-        entry.data.tags.map((tag) => (
-          <a
-            href={`/tags/${tag}`}
-            class={cn(badgeVariants({ variant: 'secondary' }), 'mr-2')}
-          >
-            {tag}
-          </a>
-        ))
-      }
-    </div>
-  </div>
-  <Separator className="my-8" />
+<PostLayout title={title} post={post}>
+  <p class="text-xl text-muted-foreground">
+    {entry.data.description}
+  </p>
+  <Separator className="my-10" />
   <MarkdownLayout>
     <Content />
   </MarkdownLayout>
-  <Separator className="my-8" />
+  <Separator className="my-10" />
   <Utterances />
   <TencentCloudAD />
 </PostLayout>

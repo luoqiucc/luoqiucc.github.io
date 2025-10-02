@@ -4,7 +4,7 @@ import Footer from '@/components/footer/footer'
 
 import '@/styles/global.css'
 
-const { title = '落秋cc | 首页' } = Astro.props
+const { title = '落秋cc', banner = {}, post = {} } = Astro.props
 ---
 
 <script is:inline>
@@ -39,8 +39,8 @@ const { title = '落秋cc | 首页' } = Astro.props
     <title>{title}</title>
   </head>
   <body>
-    <Nav client:load />
-    <div class="flex flex-1 flex-col gap-4 px-4 py-10">
+    <Nav banner={banner} post={post} client:load />
+    <div class="px-4 py-10">
       <div class="mx-auto h-full w-full max-w-5xl">
         <slot />
       </div>
