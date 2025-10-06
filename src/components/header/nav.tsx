@@ -62,7 +62,7 @@ export default function Nav({ banner, post }: Props) {
           />
         ) : (
           <img
-            className="h-full w-full object-cover absolute -z-9"
+            className="h-full w-full object-cover absolute -z-9 bg-primary"
             src={post.coverUrl}
             alt="Banner"
           />

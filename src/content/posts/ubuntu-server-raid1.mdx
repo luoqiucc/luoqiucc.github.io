@@ -1,0 +1,101 @@
+---
+title: '在安装Ubuntu Server时配置磁盘RAID(Ubuntu Server@24.04)'
+description: '本文来聊聊在安装Ubuntu Server操作系统时如何配置RAID1'
+pubDate: 2025-10-06
+tags: ['Ubuntu', 'RAID', '安装&部署', 'Linux']
+---
+
+import { Siren, Lightbulb } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import Image from '@/components/md/image'
+
+<Alert variant="default">
+  <Lightbulb />
+  <AlertTitle>INFO</AlertTitle>
+  <AlertDescription>
+    这里我使用了两块30GB的物理硬盘来组建 <i><b>RAID1</b></i>，操作系统为 <i><b>Ubuntu Server 24.04</b></i>
+  </AlertDescription>
+</Alert>
+<br/>
+<Alert variant="destructive">
+  <Siren />
+  <AlertTitle>WARNING</AlertTitle>
+  <AlertDescription>
+    组建 <i><b>RAID1</b></i> 至少需要两块硬盘
+  </AlertDescription>
+</Alert>
+<br/>
+<Alert variant="destructive">
+  <Siren />
+  <AlertTitle>WARNING</AlertTitle>
+  <AlertDescription>
+    配置过程中会涉及到格式化硬盘，请注意备份个人数据
+  </AlertDescription>
+</Alert>
+
+## 前期准备
+- 操作系统安装镜像（这里我使用的是Ubuntu Server 24.04）
+- 至少两块硬盘（这里我使用两块硬盘，每块容量为30GB）
+
+## RAID配置
+这里我们启动操作系统的安装程序，前面几步就略过，到达存储配置页面后，选择 _Custom storage layout_
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e3365ade412.png" description="Custom storage layout" ratio = {3/2} />
+</div>
+
+进入后，你将会看到类似这样的页面。其中 _AVAILABLE DEVICES_ 中便会显示已找到的所有硬盘设备，这里我的设备便是 _/dev/sda_ 和 _/dev/sdb_
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e337e376239.png" description="AVAILABLE DEVICES" ratio = {3/2} />
+</div>
+
+下面，我们分别格式化这两块硬盘，选中设备后，在选项中选择 _Format_ 或 _Reformat_ (这里根据磁盘状态选项会有所不同，选择能够使用的即可)
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e338b88f3f2.png" description="Format" ratio = {3/2} />
+</div>
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e339b6d9b54.png" description="Format" ratio = {3/2} />
+</div>
+
+格式化完成后，再次选中其中一块硬盘，选择 _Use As Boot Device_，这一步用于创建引导分区
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e33a2635745.png" description="Use As Boot Device" ratio = {3/2} />
+</div>
+
+下面，将剩余空间继续创建分区。分别选择每块硬盘的 _free Space_, 在弹出的选项中选择 _Add GPT Partition_
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e33b03cf711.png" description="Add GPT Partition to /dev/sda" ratio = {3/2} />
+</div>
+
+其中，_Size_ 选项留空（留空便是默认使用全部空间），_Format_ 选项选择 _Leave unformatted_
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e33c045009c.png" description="Add GPT Partition to /dev/sda" ratio = {3/2} />
+</div>
+
+两块硬盘全部处理完成后，选择 _Create software RAID_，创建完成后，你应该会在 _AVAILABLE DEVICES_ 列表中看到刚才创建的 _md0_ 设备
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e33e3b1c369.png" description="Create software RAID" ratio = {3/2} />
+</div>
+
+最后，选择 _md0_ 设备下的 _free Space_，在弹出的选项中选择 _Add GPT Partition_，用于为上面创建的RAID设备进行分区。其中 _Size_ 选项依然留空（留空便是默认使用全部空间），_Format_ 选项选择 _ext4_，_Mount_ 选项选择 _/_，即根目录
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e340496e24c.png" description="Add GPT Partition to md0" ratio = {3/2} />
+</div>
+
+全部完成后，你应该会看到类似下面这样的界面，此时RAID1配置便以全部完成，选择 _Done_ 继续后续安装即可
+<div className="my-4">
+    <Image url="https://free.picui.cn/free/2025/10/06/68e34181a5d44.png" description="Add GPT Partition to md0" ratio = {3/2} />
+</div>
+
+## 查看RAID状态
+查看raid级别，当前状态等信息
+```shell
+cat /proc/mdstat
+```
+
+使用mdadm查看（若没有安装mdadm，请先安装）
+```shell
+sudo mdadm --detail /dev/md0
+```
+
+## 参考
+- [Ubuntu Server documentation](https://documentation.ubuntu.com/server/)
