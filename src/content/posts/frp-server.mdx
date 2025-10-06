@@ -1,0 +1,77 @@
+---
+title: '使用FRP搭建内网穿透服务'
+description: 'FRP是一款开源，简单、高效的内网穿透工具，支持 TCP, UDP, HTTP, HTTPS 等多种协议，提供了加密、压缩，身份认证，代理限速，负载均衡等众多能力。本文来聊聊如何通过FRP与公网主机实现内网穿透功能'
+pubDate: 2025-10-07
+tags: ['FRP', '计算机网络', 'Linux', 'Ubuntu']
+---
+
+import { Siren, Lightbulb } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+<Alert variant="default">
+  <Lightbulb />
+  <AlertTitle>INFO</AlertTitle>
+  <AlertDescription>
+    FRP是开源软件，他的Github主页地址为 https://github.com/fatedier/frp
+  </AlertDescription>
+</Alert>
+<br/>
+<Alert variant="destructive">
+  <Siren />
+  <AlertTitle>WARNING</AlertTitle>
+  <AlertDescription>
+    将内网服务暴露到公网可能存在安全风险，请注意网络安全
+  </AlertDescription>
+</Alert>
+
+## 先决条件
+- 具有公网IP的主机或服务器
+
+## FRP工作模式
+FRP 采用 C/S 模式，将服务端部署在具有公网 IP 的机器上，客户端部署在内网或防火墙内的机器上，通过访问暴露在服务器上的端口，反向代理到处于内网的服务。
+
+## 安装&使用FRP
+### 下载
+前往frp的Github发布页 https://github.com/fatedier/frp/releases 下载对应平台的文件包。解压后你将会得到下面的文件
+```shell
+frps # 服务端程序
+frpc # 客户端程序
+frps.toml # 服务端配置文件
+frpc.toml # 客户端配置文件
+```
+*不同平台的二进制文件会有不同的拓展名，这里我以Linux平台为例*
+
+### 配置
+下面的配置将访问服务器端口3302的流量转发到了内网端口8080
+
+**服务端配置**
+```toml
+bindPort = 7000 # 服务端与客户端通信使用的端口号
+```
+
+**客户端配置**
+```toml
+serverAddr = "x.x.x.x" # 服务端的IP地址
+serverPort = 7000 # 服务端与客户端通信使用的端口号，与服务端的设置保持一致
+
+[[proxies]]
+name = "proxy" # 应用名
+type = "tcp" # 网络协议
+localIP = "127.0.0.1" # 内网服务的IP地址，一般为本地回环地址
+localPort = 8080 # 内网服务的端口号
+remotePort = 3302 # 服务端需要监听的端口
+```
+
+### 启动FRP
+服务端启动
+```shell
+./frps -c ./frps.toml
+```
+
+客户端启动
+```shell
+./frpc -c ./frpc.toml
+```
+
+## 参考
+- FRP官方文档 https://gofrp.org/zh-cn/docs/
