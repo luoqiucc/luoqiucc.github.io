@@ -9,7 +9,7 @@ export const postSchema = z.object({
   author: z.string().default('落秋cc'),
   coverUrl: z
     .string()
-    .default('https://free.picui.cn/free/2025/10/02/68de66a3bdf22.png'),
+    .default('https://pic1.imgdb.cn/item/691848ad3203f7be00085dca.png'),
 })
 
 export const momentSchema = z.object({

@@ -57,12 +57,13 @@ export default function Nav({ banner, post }: Props) {
         {JSON.stringify(post) == '{}' ? (
           <img
             className="h-full w-full object-cover absolute -z-9 bg-primary"
-            src="https://free.picui.cn/free/2025/10/02/68de66a3bdf22.png"
+            src="https://pic1.imgdb.cn/item/691848ad3203f7be00085dca.png"
             alt="Banner"
           />
         ) : (
           <img
             className="h-full w-full object-cover absolute -z-9 bg-primary"
+            // src={'https://pic1.imgdb.cn/item/6918497d3203f7be000863a5.png'}
             src={post.coverUrl}
             alt="Banner"
           />

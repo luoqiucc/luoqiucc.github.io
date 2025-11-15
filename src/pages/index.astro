@@ -8,6 +8,7 @@ import PostCard from '@/components/post/post-card'
 import MomentCard from '@/components/moment/moment-card'
 import MainTitle from '@/components/title/main-title'
 import PikpakAD from '@/components/ad/pikpak-ad'
+import JuheImagesAD from '@/components/ad/juheimages'
 import TencentCloudAD from '@/components/ad/tencent-cloud-ad'
 
 const posts = await getCollection('posts')
@@ -21,7 +22,7 @@ const latestPosts = posts.slice(0, 5)
 moments.sort((x, y) => {
   return y.data.pubDate.getTime() - x.data.pubDate.getTime()
 })
-const latestMoments = moments.slice(0, 4)
+const latestMoments = moments.slice(0, 3)
 
 const title = '落秋cc | 首页'
 const banner = {
@@ -32,7 +33,7 @@ const banner = {
 
 <MainLayout title={title} banner={banner}>
   <MainTitle>最新动态</MainTitle>
-  <div class="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+  <div class="my-4 grid grid-cols-1 gap-4 md:grid-cols-3">
     {
       latestMoments.map((moment) => (
         <MomentCard
@@ -54,7 +55,8 @@ const banner = {
     </Button>
   </a>
 
-  <PikpakAD />
+  <!-- AD -->
+  <JuheImagesAD />
 
   <MainTitle>最新博客</MainTitle>
   <div class="my-4">
@@ -78,5 +80,6 @@ const banner = {
     </Button>
   </a>
 
+  <!-- AD -->
   <TencentCloudAD />
 </MainLayout>
