@@ -1,0 +1,103 @@
+---
+title: '安装&配置DPDK'
+description: '来聊聊DPDK技术以及如何搭建一个DPDK开发环境'
+pubDate: 2025-11-15
+tags: ['DPDK', '计算机网络', '高性能网络']
+---
+
+import { Siren, Lightbulb } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+<Alert variant="default">
+  <Lightbulb />
+  <AlertTitle>INFO</AlertTitle>
+  <AlertDescription>
+    这里我使用的操作系统为 <i><b>Ubuntu 22.04</b></i>
+  </AlertDescription>
+</Alert>
+
+## 前期准备
+操作系统内核版本为5.4及以上，可以使用下面的命令检查
+```shell
+uname -r
+```
+
+glibc版本为2.7及以上，可以使用下面的命令检查
+```shell
+ldd --version
+```
+
+Python版本为3.6及以上，可以使用下面的命令检查
+```shell
+python3 --version
+```
+
+安装编译工具链
+```shell
+apt install build-essential pkg-config
+```
+
+安装meson和ninja-build
+```shell
+apt install meson ninja-build 
+```
+
+安装pyelftools
+```shell
+apt install python3-pyelftools
+```
+
+安装libnuma-dev
+```shell
+apt install libnuma-dev
+```
+
+## 安装/编译DPDK
+
+下载DPDK包
+- DPDK官方下载页：https://core.dpdk.org/download/
+
+下载完成后解压该包并进入
+```shell
+# 'x'请替换为自己的实际版本号
+tar xJf dpdk-x.x.x.tar.xz
+cd dpdk-x.x.x
+```
+
+> 包中文件说明（来自官方文档）
+>
+> The DPDK is composed of several directories, including:
+> doc: DPDK Documentation
+> license: DPDK license information
+> lib: Source code of DPDK libraries
+> drivers: Source code of DPDK poll-mode drivers
+> app: Source code of DPDK applications (automatic tests)
+> examples: Source code of DPDK application examples
+> config, buildtools: Framework-related scripts and configuration
+> usertools: Utility scripts for end-users of DPDK applications
+> devtools: Scripts for use by DPDK developers
+> kernel: Kernel modules needed for some operating systems
+
+配置构建
+```shell
+meson setup build
+```
+
+构建并安装DPDK
+```shell
+cd build
+ninja
+meson install
+ldconfig
+```
+
+验证安装，使用下面的命令查看当前网卡的状态
+```shell
+dpdk-devbind.py --status-dev net
+
+# 如果一切正常，他应该会输出当前网卡的状态信息，就像下面这样
+Network devices using kernel driver
+===================================
+0000:02:01.0 '82545EM Gigabit Ethernet Controller (Copper) 100f' if=ens33 drv=e1000 unused= *Active*
+```
+
