@@ -34,22 +34,27 @@ python3 --version
 
 安装编译工具链
 ```shell
-apt install build-essential pkg-config
+sudo apt install build-essential pkg-config
 ```
 
-安装meson和ninja-build
+安装meson
 ```shell
-apt install meson ninja-build 
+sudo pip3 install meson
+```
+
+安装ninja-build
+```shell
+sudo apt install ninja-build 
 ```
 
 安装pyelftools
 ```shell
-apt install python3-pyelftools
+sudo apt install python3-pyelftools
 ```
 
 安装libnuma-dev
 ```shell
-apt install libnuma-dev
+sudo apt install libnuma-dev
 ```
 
 ## 安装/编译DPDK
@@ -87,8 +92,8 @@ meson setup build
 ```shell
 cd build
 ninja
-meson install
-ldconfig
+sudo meson install
+sudo ldconfig
 ```
 
 验证安装，使用下面的命令查看当前网卡的状态
