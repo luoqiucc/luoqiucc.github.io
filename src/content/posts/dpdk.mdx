@@ -2,7 +2,7 @@
 title: '安装&配置DPDK'
 description: '来聊聊DPDK技术以及如何搭建一个DPDK开发环境'
 pubDate: 2025-11-15
-tags: ['DPDK', '计算机网络', '高性能网络']
+tags: ['DPDK', '计算机网络', '高性能网络', 'Ubuntu']
 ---
 
 import { Siren, Lightbulb } from "lucide-react"
@@ -37,14 +37,9 @@ python3 --version
 sudo apt install build-essential pkg-config
 ```
 
-安装meson
+安装meson & ninja
 ```shell
-sudo pip3 install meson
-```
-
-安装ninja-build
-```shell
-sudo apt install ninja-build 
+sudo pip3 install meson ninja
 ```
 
 安装pyelftools
@@ -99,10 +94,103 @@ sudo ldconfig
 验证安装，使用下面的命令查看当前网卡的状态
 ```shell
 dpdk-devbind.py --status-dev net
-
-# 如果一切正常，他应该会输出当前网卡的状态信息，就像下面这样
-Network devices using kernel driver
-===================================
-0000:02:01.0 '82545EM Gigabit Ethernet Controller (Copper) 100f' if=ens33 drv=e1000 unused= *Active*
 ```
 
+如果一切正常，他应该会输出当前网卡的状态信息，就像下面这样。
+```shell
+Network devices using kernel driver
+===================================
+0000:00:1f.6 'Ethernet Connection (7) I219-V 15bc' if=eno1 drv=e1000e unused=vfio-pci 
+0000:01:00.0 'Ethernet Controller E810-C for QSFP 1592' if=enp1s0f0np0 drv=ice unused=vfio-pci 
+0000:01:00.1 'Ethernet Controller E810-C for QSFP 1592' if=enp1s0f1np1 drv=ice unused=vfio-pci 
+```
+同时也可以看到，目前我们的网卡设备依然在使用内核驱动，下一步我们需要将他移动到DPDK驱动。
+
+## 加载网卡设备到DPDK
+
+加载vfio驱动
+```shell
+sudo modprobe vfio-pci iommu=on
+```
+
+注意，vifo需要IOMMU保护，但如果你的系统中没有该模块，那就需要加载一个额外的模块
+```shell
+# 加载vfio模块
+sudo modprobe vfio-pci
+
+# 配置no-IOMMU模式
+modprobe vfio enable_unsafe_noiommu_mode=1
+```
+
+查看当前设备状态
+```shell
+dpdk-devbind.py --status-dev net
+```
+
+可以看到，当前我的设备有三块网卡，并且都没有配置在DPDK驱动下
+```shell
+Network devices using kernel driver
+===================================
+0000:00:1f.6 'Ethernet Connection (7) I219-V 15bc' if=eno1 drv=e1000e unused=vfio-pci 
+0000:01:00.0 'Ethernet Controller E810-C for QSFP 1592' if=enp1s0f0np0 drv=ice unused=vfio-pci 
+0000:01:00.1 'Ethernet Controller E810-C for QSFP 1592' if=enp1s0f1np1 drv=ice unused=vfio-pci 
+```
+
+将该设备绑定到DPDK驱动
+```shell
+sudo dpdk-devbind.py --bind=vfio-pci 0000:01:00.0
+```
+
+再次查看设备状态
+```shell
+dpdk-devbind.py --status-dev net
+```
+
+```shell
+# 网卡已经被绑定到DPDK驱动
+Network devices using DPDK-compatible driver
+============================================
+0000:01:00.0 'Ethernet Controller E810-C for QSFP 1592' drv=vfio-pci unused=ice
+
+Network devices using kernel driver
+===================================
+0000:00:1f.6 'Ethernet Connection (7) I219-V 15bc' if=eno1 drv=e1000e unused=vfio-pci 
+0000:01:00.1 'Ethernet Controller E810-C for QSFP 1592' if=enp1s0f1np1 drv=ice unused=vfio-pci
+```
+
+## 设置大页内存（可选）
+
+可以使用下面的命令查看当前内存的分配状态
+```shell
+cat /proc/meminfo | grep Huge
+```
+
+```shell
+AnonHugePages:         0 kB
+ShmemHugePages:   137216 kB
+FileHugePages:         0 kB
+HugePages_Total:       0 # 大页内存总数，因为还未分配，所以目前是0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+```
+
+编辑 **_/etc/default/grub_** 文件，在 **_GRUB_CMDLINE_LINUX_DEFAULT_** 行添加大页内存参数
+```shell
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash hugepagesz=1G hugepapges=4"
+```
+
+重新加载配置
+```shell
+update-grub
+```
+
+再次使用下面的命令查看当前内存的分配状态
+```shell
+cat /proc/meminfo | grep Huge
+```
+
+## 参考
+- DPDK官方文档：https://doc.dpdk.org/guides/index.html#

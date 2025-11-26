@@ -1,0 +1,144 @@
+---
+title: '英特尔E810-C网卡配置'
+description: '英特尔E810-C网卡配置'
+pubDate: 2025-11-20
+tags: ['Optical Module', '计算机网络', '硬件']
+---
+
+## 安装ice
+
+### 依赖
+
+```shell
+sudo apt install build-essential gcc-12 g++-12
+```
+
+### 安装
+
+```shell
+tar zxf ice-<x.x.x>.tar.gz
+
+cd ice-<x.x.x>/src/
+
+sudo make CFLAGS_EXTRA='-DUNIFIED_STATS' install
+
+sudo rmmod ice
+
+sudo modprobe ice
+```
+
+## 安装irdma
+
+### 依赖
+
+```shell
+sudo apt-get install build-essential cmake gcc libudev-dev libnl-3-dev libnl-route-3-dev ninja-build pkg-config valgrind python3-dev cython3 python3-docutils pandoc
+
+sudo apt-get install python3-docutils libsystemd-dev debhelper dh-python
+```
+
+### 安装
+
+```shell
+# NOTE: 此处为irdma的安装
+
+tar zxf irdma-<version>.tgz
+
+cd irdma-<version>
+
+sudo ./build.sh
+
+sudo modprobe irdma
+```
+
+```shell
+# NOTE: 此处为rdma-core的安装
+
+tar -xzvf rdma-core-54.0.tar.gz
+
+cd rdma-core-54.0
+
+patch -p2 < /path/to/irdma-<version>/libirdma-54.0.patch
+
+sudo dh clean --with python3,systemd --builddirectory=build-deb
+
+sudo dh build --with systemd --builddirectory=build-deb
+
+sudo dh binary --with systemd --builddirectory=build-deb
+
+sudo dpkg -i ../*.deb
+```
+
+添加以下内容到 **_/etc/security/limits.conf_**
+```shell
+* soft memlock unlimited
+* hard memlock unlimited
+* soft nofile 1048000
+* hard nofile 1048000
+```
+
+添加以下内容到 **_/etc/systemd/user.conf_** 和 **_/etc/systemd/system.conf_**
+```shell
+DefaultLimitMEMLOCK=1073741824
+```
+
+
+## 配置RoCE v2
+
+- 全局配置
+添加以下内容到 **_/etc/modprobe.d/irdma.conf_**
+```shell
+options irdma roce_ena=1
+```
+
+- 手动配置
+```shell
+sudo rmmod irdma
+sudo modprobe irdma roce_ena=1
+```
+
+## 安装perfTest
+
+### 依赖
+
+```shell
+sudo apt install libpci-dev librdmacm-dev libibumad-dev
+```
+
+### 安装
+
+```shell
+cd perftest
+
+./autogen.sh
+
+./configure
+
+make
+
+sudo make install
+```
+
+## 测试
+
+测试RDMA功能
+```shell
+# server
+rping -sdvVa [server IP address]
+
+# client
+rping -cdvVa [server IP address] -C 10
+```
+
+测试RDMA带宽
+```shell
+# server
+ib_write_bw -R
+# 示例
+sudo ib_write_bw -d rocep1s0f1 -R
+
+# client
+ib_write_bw -R <IP address of server>
+# 示例
+sudo ib_write_bw -d rocep1s0f1 -R <IP address of server>
+```
