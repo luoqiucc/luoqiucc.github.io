@@ -192,5 +192,42 @@ update-grub
 cat /proc/meminfo | grep Huge
 ```
 
+## 运行你的第一个DPDK程序
+这里我们以官方示例程序 **_helloworld_** 为例
+
+对于构建方式，这里我选用官方推荐的meson
+
+进入 **_helloworld_** 示例程序的目录中
+```shell
+cd example/helloworld
+```
+
+编写meson.build文件，如果该文件已经存在就替换他
+```meson
+project('helloworld', 'c')
+
+dpdk = dependency('libdpdk')
+sources = files('main.c')
+executable('helloworld', sources, dependencies: dpdk)
+```
+
+启动构建
+```shell
+meson setup build
+
+# 下面是该命令的简化版本
+meson build
+```
+
+编译dpdk程序
+```shell
+ninja -C build
+```
+
+运行该dpdk程序
+```shell
+./build/helloworld
+```
+
 ## 参考
 - DPDK官方文档：https://doc.dpdk.org/guides/index.html#
