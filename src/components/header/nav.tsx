@@ -1,7 +1,7 @@
 import { buttonVariants } from '@/components/ui/button'
 import { badgeVariants } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { Contact } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 
 import { ModeToggle } from '../ModeToggle'
 
@@ -86,8 +86,8 @@ export default function Nav({ banner, post }: Props) {
             ) : (
               <div>
                 <div className="flex items-center text-primary my-4">
-                  <Contact size={20} className="mr-2" />
-                  {post.pubDate.toISOString().slice(0, 10)} @{post.author}
+                  <Calendar size={20} className="mr-2" />
+                  {post.pubDate.toISOString().slice(0, 10)}
                 </div>
                 <div className="my-4">
                   <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">

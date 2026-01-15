@@ -1,4 +1,4 @@
-import { Contact } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { badgeVariants } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
@@ -17,8 +17,8 @@ export default function PostCard(props: Props) {
     <a href={`/posts/${props.id}`}>
       <div>
         <div className="flex items-center text-primary">
-          <Contact size={20} className="mr-2" />
-          {props.pubDate.toISOString().slice(0, 10)} @{props.author}
+          <Calendar size={20} className="mr-2" />
+          {props.pubDate.toISOString().slice(0, 10)}
         </div>
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight my-4">
           {props.title}
