@@ -8,10 +8,12 @@ import { PostCard } from "@/components/post-card"
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 )
+const latestPosts = posts.slice(0, 5)
 
 const papers = posts.filter((post) => {
   return post.data.category == "paper"
 })
+const latestPapers = papers.slice(0, 3)
 ---
 
 <IndexLayout>
