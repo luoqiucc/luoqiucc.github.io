@@ -1,0 +1,92 @@
+---
+title: "运行第一个P4程序"
+subtitle: ""
+abstract: "设置环境变量，加载驱动，启动一个ECMP的P4实例，手动配置路由表"
+category: "network-hardware"
+pubDate: 2025-11-19
+---
+
+## 启动P4(ECMP)
+
+进入sde根目录
+
+```shell
+$ cd $SDE
+```
+
+设置环境变量
+
+```shell
+$ . ./set_bash.sh
+```
+
+加载驱动
+
+```shell
+$ sudo install/bin/bf_kdrv_mod_load $SDE_INSTALL
+```
+
+运行p4实例，以ECMP为例
+
+```shell
+$ ./run_swichd.sh -p ecmp
+```
+
+## 配置ECMP
+
+添加并使能端口
+
+```shell
+# 进入cli
+bfshell> ucli
+# 进入端口管理
+bf-sde> pm
+# 添加端口，这里以添加端口1/0为例,端口速率设为100Gbps
+bf-sde.pm> port-add 1/0 100G NONE
+# 使能端口1/0
+bf-sde.pm> port-enb 1/0
+
+# 添加端口，这里以添加端口2/0为例,端口速率设为100Gbps
+bf-sde.pm> port-add 2/0 100G NONE
+# 使能端口2/0
+bf-sde.pm> port-enb 2/0
+```
+
+配置路由规则
+
+```shell
+# 进入bfrt
+bfshell> bfrt_python
+
+# 进入arp_host
+bfrt> bfrt
+bfrt> ecmp
+bfrt.ecmp> pipe
+bfrt.ecmp.pipe> Ingress
+bfrt.ecmp.pipe.Ingress> arp_host
+
+# 添加ip与端口的对应关系
+bfrt.ecmp.pipe.Ingress.arp_host> add_with_unicast_send(十六进制格式IP地址, 对应端口D_P)
+
+# 返回上一层
+bfrt.ecmp.pipe.Ingress.arp_host> ..
+
+# 进入ecmp_select_t
+bfrt.ecmp.pipe.Ingress> ecmp_select_t
+
+# 添加ecmp可选端口
+bfrt.ecmp.pipe.Ingress.ecmp_select_t> add_with_ecmp_select(十六进制格式IP地址, hash, 对应端口D_P)
+```
+
+## 编译P4程序
+
+```shell
+# 这里以编译ecmp.p4程序为例
+$SDE/p4_build.sh ecmp.p4
+```
+
+### 使用Python脚本自动配置路由表项
+
+```shell
+./run_bfshell -b <script>
+```

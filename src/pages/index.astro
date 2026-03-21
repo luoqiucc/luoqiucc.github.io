@@ -1,17 +1,38 @@
 ---
-import Layout from "@/layouts/main.astro"
+import { getCollection } from "astro:content"
+import IndexLayout from "@/layouts/index.astro"
 import { Button } from "@/components/ui/button"
+import { PaperCard } from "@/components/paper-card"
+import { PostCard } from "@/components/post-card"
+
+const posts = (await getCollection("posts")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+)
+
+const papers = posts.filter((post) => {
+  return post.data.category == "paper"
+})
 ---
 
-<Layout>
-  <div class="flex min-h-svh p-6">
-    <div class="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-      <div>
-        <h1 class="font-medium">Project ready!</h1>
-        <p>You may now add components and start building.</p>
-        <p>We've already added the button component for you.</p>
-        <Button client:load className="mt-2">Button</Button>
-      </div>
-    </div>
+<IndexLayout>
+  <div class="flex items-center justify-between">
+    <h3 class="my-8 scroll-m-20 text-2xl font-semibold tracking-tight">
+      论文研读
+    </h3>
+    <Button variant="link">
+      <a href="/">查看全部</a>
+    </Button>
   </div>
-</Layout>
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    {papers.map((paper) => <PaperCard post={paper} />)}
+  </div>
+  <div class="flex items-center justify-between">
+    <h3 class="my-8 scroll-m-20 text-2xl font-semibold tracking-tight">博客</h3>
+    <Button variant="link">
+      <a href="/post">查看全部</a>
+    </Button>
+  </div>
+  <div class="grid grid-cols-1 gap-4">
+    {posts.map((post) => <PostCard post={post} />)}
+  </div>
+</IndexLayout>

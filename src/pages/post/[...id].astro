@@ -1,0 +1,49 @@
+---
+import { getCollection, render } from "astro:content"
+import { formatDate } from "@/lib/utils"
+import PostLayout from "@/layouts/post.astro"
+import TypographyH2 from "@/components/mdx/typography-h2.astro"
+import TypographyH3 from "@/components/mdx/typography-h3.astro"
+import TypographyBlockquote from "@/components/mdx/typography-blockquote.astro"
+import TypographyP from "@/components/mdx/typography-p.astro"
+import TypographyList from "@/components/mdx/typography-list.astro"
+
+const components = {
+  h2: TypographyH2,
+  h3: TypographyH3,
+  blockquote: TypographyBlockquote,
+  p: TypographyP,
+  ul: TypographyList,
+}
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts")
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }))
+}
+
+const { post } = Astro.props
+const { Content } = await render(post)
+---
+
+<PostLayout>
+  <div class="my-16">
+    <p class="my-8 text-center text-sm text-muted-foreground">
+      {formatDate(post.data.pubDate)}
+    </p>
+    <h1
+      class="my-8 scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance"
+    >
+      {post.data.title}
+    </h1>
+    <p class="my-8 text-center text-xl text-muted-foreground">
+      {post.data.subtitle}
+    </p>
+  </div>
+  <blockquote class="my-16 border-l-2 pl-6 italic">
+    &quot;{post.data.abstract}&quot;
+  </blockquote>
+  <Content components={components} />
+</PostLayout>

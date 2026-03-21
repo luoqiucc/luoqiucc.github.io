@@ -1,0 +1,24 @@
+---
+import { getCollection } from "astro:content"
+import { PostCard } from "@/components/post-card"
+import IndexLayout from "@/layouts/index.astro"
+
+const networkHardwares = await getCollection("posts", ({ data }) => {
+  return data.category == "network-hardware"
+})
+---
+
+<IndexLayout>
+  <h1
+    class="my-8 scroll-m-20 text-4xl font-extrabold tracking-tight text-balance"
+  >
+    网络硬件
+  </h1>
+  <div class="grid grid-cols-1 gap-4">
+    {
+      networkHardwares.map((networkHardware) => (
+        <PostCard post={networkHardware} />
+      ))
+    }
+  </div>
+</IndexLayout>

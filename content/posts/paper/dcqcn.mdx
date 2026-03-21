@@ -1,0 +1,21 @@
+---
+title: "Congestion Control for Large-Scale RDMA Deployments"
+subtitle: "SIGCOMM '15: ACM SIGCOMM 2015 Conference"
+abstract: "Modern datacenter applications demand high throughput (40Gbps) and
+  ultra-low latency 10 µs per hop from the network, with low CPU
+  overhead. Standard TCP/IP stacks cannot meet these requirements, but
+  Remote Direct Memory Access (RDMA) can. On IP-routed datacenter
+  networks, RDMA is deployed using RoCEv2 protocol, which relies on
+  Priority-based Flow Control (PFC) to enable a drop-free network.
+  However, PFC can lead to poor application performance due to problems
+  like head-of-line blocking and unfairness. To alleviates these
+  problems, we introduce DCQCN, an end-to-end congestion control scheme
+  for RoCEv2. To optimize DCQCN performance, we build a ﬂuid model, and
+  provide guidelines for tuning switch buffer thresholds, and other
+  protocol parameters. Using a 3-tier Clos network testbed, we show that
+  DCQCN dramatically improves throughput and fairness of RoCEv2 RDMA
+  trafﬁc. DCQCN is implemented in Mellanox NICs, and is being deployed
+  in Microsoft’s datacenters."
+category: "paper"
+pubDate: 2026-02-19
+---
