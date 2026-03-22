@@ -17,7 +17,7 @@ interface Props {
 function PostCard({ post }: Props) {
   return (
     <a href={`/post/${post.id}`}>
-      <Card>
+      <Card className="max-h-48">
         <CardHeader>
           <CardTitle>{post.data.title}</CardTitle>
           <CardDescription>{post.data.subtitle}</CardDescription>
@@ -27,7 +27,7 @@ function PostCard({ post }: Props) {
             </Badge>
           </CardAction>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-y-auto">
           <p>{post.data.abstract}</p>
         </CardContent>
       </Card>
