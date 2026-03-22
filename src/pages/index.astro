@@ -2,32 +2,15 @@
 import { getCollection } from "astro:content"
 import IndexLayout from "@/layouts/index.astro"
 import { Button } from "@/components/ui/button"
-import { PaperCard } from "@/components/paper-card"
 import { PostCard } from "@/components/post-card"
 
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 )
 const latestPosts = posts.slice(0, 5)
-
-const papers = posts.filter((post) => {
-  return post.data.category == "paper"
-})
-const latestPapers = papers.slice(0, 3)
 ---
 
 <IndexLayout>
-  <div class="flex items-center justify-between">
-    <h3 class="my-8 scroll-m-20 text-2xl font-semibold tracking-tight">
-      论文研读
-    </h3>
-    <Button variant="link">
-      <a href="/">查看全部</a>
-    </Button>
-  </div>
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-    {papers.map((paper) => <PaperCard post={paper} />)}
-  </div>
   <div class="flex items-center justify-between">
     <h3 class="my-8 scroll-m-20 text-2xl font-semibold tracking-tight">博客</h3>
     <Button variant="link">
@@ -35,6 +18,6 @@ const latestPapers = papers.slice(0, 3)
     </Button>
   </div>
   <div class="grid grid-cols-1 gap-4">
-    {posts.map((post) => <PostCard post={post} />)}
+    {latestPosts.map((post) => <PostCard post={post} />)}
   </div>
 </IndexLayout>
