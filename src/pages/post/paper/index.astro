@@ -15,6 +15,6 @@ const papers = await getCollection("posts", ({ data }) => {
     论文研读
   </h1>
   <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-    {papers.map((paper) => <PaperCard post={paper} />)}
+    {papers.map((post) => <PaperCard post={post} />)}
   </div>
 </IndexLayout>

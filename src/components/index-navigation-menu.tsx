@@ -27,8 +27,8 @@ function IndexNavigationMenu() {
               <ListItem href="/post/paper" title="论文研读">
                 论文阅读笔记
               </ListItem>
-              <ListItem href="/post/network-hardware" title="网络硬件">
-                与P4-16语言，P4可编程交换机，RDMA网卡相关的内容
+              <ListItem href="/post/computer-networks" title="计算机网络">
+                P4，RDMA，DPDK等计算机网络相关内容
               </ListItem>
             </ul>
           </NavigationMenuContent>

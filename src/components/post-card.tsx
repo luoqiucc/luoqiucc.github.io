@@ -17,7 +17,7 @@ interface Props {
 function PostCard({ post }: Props) {
   return (
     <a href={`/post/${post.id}`}>
-      <Card className="max-h-48">
+      <Card className="max-h-72">
         <CardHeader>
           <CardTitle>{post.data.title}</CardTitle>
           <CardDescription>{post.data.subtitle}</CardDescription>
@@ -41,8 +41,8 @@ function getCcategoryName(category: string) {
       return "随笔"
     case "paper":
       return "论文研读"
-    case "network-hardware":
-      return "网络硬件"
+    case "computer-networks":
+      return "计算机网络"
     default:
       return "未知"
   }

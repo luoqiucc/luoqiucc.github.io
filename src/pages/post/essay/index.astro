@@ -15,6 +15,6 @@ const essays = await getCollection("posts", ({ data }) => {
     随笔
   </h1>
   <div class="grid grid-cols-1 gap-4">
-    {essays.map((essay) => <PostCard post={essay} />)}
+    {essays.map((post) => <PostCard post={post} />)}
   </div>
 </IndexLayout>

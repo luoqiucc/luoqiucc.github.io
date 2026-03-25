@@ -1,0 +1,69 @@
+---
+title: "C程序经典结构化配置文件处理库libconfig使用指南"
+subtitle: "库本身支持C/C++，本文以C程序为例"
+abstract: "对于需要读取外部配置文件的C/C++程序，使用libconfig库就非常合适，
+  本文就来聊聊C语言经典结构化配置文件处理库libconfig的安装与使用。"
+category: "essay"
+pubDate: 2026-03-25
+---
+
+## 一，安装libconfig
+
+对于Ubuntu系统，直接使用下面的命令安装即可
+
+```shell
+sudo apt install libconfig-dev
+```
+
+## 二，在你的C程序中使用libconfig
+
+我的示例配置文件如下:
+
+_config.cfg_
+
+```cfg
+# 应用配置
+app_config:{
+  version = "1.0";
+
+}
+```
+
+引入头文件
+
+```c
+#include <libconfig.h>
+```
+
+```c
+config_t cfg;
+config_init(&cfg);
+
+    // 读取配置文件
+    if (!config_read_file(&cfg, app_config_file))
+    {
+        fprintf(stderr, "%s:%d: %s\n", config_error_file(&cfg),
+                config_error_line(&cfg), config_error_text(&cfg));
+        config_destroy(&cfg);
+    }
+
+    const char *version;
+    config_lookup_string(&cfg, "app_config.version", &version);
+
+    config_setting_t *flow_list = config_lookup(&cfg, "app_config.flows");
+    int count = config_setting_length(flow_list);
+
+    for (int i = 0; i < count; i++)
+    {
+        config_setting_t *dev = config_setting_get_elem(flow_list, i);
+        const char *value;
+        config_setting_lookup_string(dev, "src_ip", &value);
+        printf("id: %s\n", value);
+    }
+
+    printf("%s\n", version);
+    printf("%d\n", count);
+
+    config_destroy(&cfg);
+}
+```
