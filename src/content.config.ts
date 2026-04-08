@@ -13,4 +13,12 @@ const posts = defineCollection({
   }),
 })
 
-export const collections = { posts }
+const moments = defineCollection({
+  loader: glob({ base: "./content/moments", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    topic: z.array(z.string()).default([]),
+    pubDate: z.coerce.date(),
+  }),
+})
+
+export const collections = { posts, moments }
