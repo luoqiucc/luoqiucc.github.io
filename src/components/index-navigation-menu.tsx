@@ -21,13 +21,13 @@ function IndexNavigationMenu() {
           <NavigationMenuTrigger>博客</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="w-56">
-              <ListItem href="/post/essay" title="随笔">
+              <ListItem href="/post/essay/1" title="随笔">
                 随便写写
               </ListItem>
-              <ListItem href="/post/paper" title="论文研读">
+              <ListItem href="/post/paper/1" title="论文研读">
                 论文阅读笔记
               </ListItem>
-              <ListItem href="/post/computer-networks" title="计算机网络">
+              <ListItem href="/post/computer-networks/1" title="计算机网络">
                 P4，RDMA，DPDK等计算机网络相关内容
               </ListItem>
             </ul>

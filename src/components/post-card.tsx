@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { formatCategory } from "@/lib/utils"
 
 interface Props {
   post: CollectionEntry<"posts">
@@ -22,7 +23,7 @@ function PostCard({ post }: Props) {
           <CardDescription>{post.data.subtitle}</CardDescription>
           <CardAction>
             <Badge variant="default">
-              {getCcategoryName(post.data.category)}
+              {formatCategory(post.data.category)}
             </Badge>
           </CardAction>
         </CardHeader>
@@ -32,19 +33,6 @@ function PostCard({ post }: Props) {
       </Card>
     </a>
   )
-}
-
-function getCcategoryName(category: string) {
-  switch (category) {
-    case "essay":
-      return "随笔"
-    case "paper":
-      return "论文研读"
-    case "computer-networks":
-      return "计算机网络"
-    default:
-      return "未知"
-  }
 }
 
 export { PostCard }

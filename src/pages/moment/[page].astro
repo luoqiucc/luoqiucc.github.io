@@ -1,0 +1,31 @@
+---
+import type { GetStaticPathsOptions } from "astro"
+import { getCollection } from "astro:content"
+import { MomentCard } from "@/components/moment-card"
+import IndexLayout from "@/layouts/index.astro"
+import { PostPagination } from "@/components/pagination"
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const moments = (await getCollection("moments")).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  )
+
+  return paginate(moments, { pageSize: 24 })
+}
+
+const { page } = Astro.props
+---
+
+<IndexLayout>
+  <h1
+    class="my-8 scroll-m-20 text-4xl font-extrabold tracking-tight text-balance"
+  >
+    全部动态
+  </h1>
+  <div class="grid grid-cols-1 items-start gap-4 md:grid-cols-3">
+    {page.data.map((moment) => <MomentCard moment={moment} />)}
+  </div>
+  <div class="my-8">
+    <PostPagination page={page} category="moment" />
+  </div>
+</IndexLayout>

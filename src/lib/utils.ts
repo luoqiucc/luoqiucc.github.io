@@ -36,3 +36,16 @@ export function formatDateEN(date: Date) {
   const day = String(date.getDate()).padStart(2, "0")
   return `${month} ${day}, ${year}`
 }
+
+export function formatCategory(category: string) {
+  switch (category) {
+    case "essay":
+      return "随笔"
+    case "paper":
+      return "论文研读"
+    case "computer-networks":
+      return "计算机网络"
+    default:
+      return "未知"
+  }
+}

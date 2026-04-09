@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content"
-import { formatDateCN } from "@/lib/utils"
+import { formatCategory, formatDateCN } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import PostLayout from "@/layouts/post.astro"
 import TypographyH2 from "@/components/mdx/typography-h2.astro"
 import TypographyH3 from "@/components/mdx/typography-h3.astro"
@@ -30,9 +31,11 @@ const { Content } = await render(post)
 
 <PostLayout>
   <div class="my-16">
-    <p class="my-8 text-center text-sm text-muted-foreground">
-      {formatDateCN(post.data.pubDate)}
-    </p>
+    <div class="my-8 flex justify-center">
+      <a href={`/post/${post.data.category}/1`}>
+        <Badge variant="secondary">{formatCategory(post.data.category)}</Badge>
+      </a>
+    </div>
     <h1
       class="my-8 scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance"
     >
@@ -40,6 +43,9 @@ const { Content } = await render(post)
     </h1>
     <p class="my-8 text-center text-xl text-muted-foreground">
       {post.data.subtitle}
+    </p>
+    <p class="my-8 text-center text-sm text-muted-foreground">
+      {formatDateCN(post.data.pubDate)}
     </p>
   </div>
   <blockquote class="my-16 border-l-2 pl-6 italic">
