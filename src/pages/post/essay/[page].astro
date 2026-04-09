@@ -6,9 +6,11 @@ import IndexLayout from "@/layouts/index.astro"
 import { PostPagination } from "@/components/pagination"
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const essays = await getCollection("posts", ({ data }) => {
-    return data.category == "essay"
-  })
+  const essays = (
+    await getCollection("posts", ({ data }) => {
+      return data.category == "essay"
+    })
+  ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 
   return paginate(essays, { pageSize: 12 })
 }
