@@ -35,7 +35,7 @@ function IndexNavigationMenu() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <a href="/">拍星星</a>
+            <a href="/post/collection/1">藏品</a>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

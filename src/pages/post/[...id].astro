@@ -3,18 +3,26 @@ import { getCollection, render } from "astro:content"
 import { formatCategory, formatDateCN } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import PostLayout from "@/layouts/post.astro"
-import TypographyH2 from "@/components/mdx/typography-h2.astro"
-import TypographyH3 from "@/components/mdx/typography-h3.astro"
-import TypographyBlockquote from "@/components/mdx/typography-blockquote.astro"
-import TypographyP from "@/components/mdx/typography-p.astro"
-import TypographyList from "@/components/mdx/typography-list.astro"
+import H2 from "@/components/mdx/h2.astro"
+import H3 from "@/components/mdx/h3.astro"
+import Blockquote from "@/components/mdx/blockquote.astro"
+import P from "@/components/mdx/p.astro"
+import List from "@/components/mdx/list.astro"
+import Table from "@/components/mdx/table/table.astro"
+import Th from "@/components/mdx/table/th.astro"
+import Tr from "@/components/mdx/table/tr.astro"
+import Td from "@/components/mdx/table/td.astro"
 
 const components = {
-  h2: TypographyH2,
-  h3: TypographyH3,
-  blockquote: TypographyBlockquote,
-  p: TypographyP,
-  ul: TypographyList,
+  h2: H2,
+  h3: H3,
+  blockquote: Blockquote,
+  p: P,
+  ul: List,
+  table: Table,
+  th: Th,
+  tr: Tr,
+  td: Td,
 }
 
 export async function getStaticPaths() {

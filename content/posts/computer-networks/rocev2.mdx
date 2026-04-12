@@ -10,3 +10,54 @@ pubDate: 2026-04-07
 
 ## 链路信息反馈
 
+### CNP
+
+
+### NACK
+
+```
+InfiniBand
+  Base Transport Header
+    Opcode: Reliable Connection (RC) - Acknowledge (17)
+    0... .... = Solicited Event: False
+    .0.. .... = MigReq: False
+    ..00 .... = Pad Count: 0
+    .... 0000 = Header Version: 0
+    Partition Key: 65535
+    Reserved: 00
+    Destination Queue Pair: 0x000005
+    0... .... = Acknowledge Request: False
+    .000 0000 = Reserved (7 bits): 0
+    Packet Sequence Number: 16159508
+  AETH - ACK Extended Transport Header
+    Syndrome: 96, Nak
+      0... .... = Reserved: 0
+      .11. .... = OpCode: Nak (3)
+      ...0 0000 = Error Code: PSN Sequence Error (0)
+    Message Sequence Number: 0
+  Invariant CRC: 0x1f11d0bb
+```
+
+**Base Transport Header (BTH，基础传输头)**
+| 字段 | 值 | 说明 |
+| :--------------------- | :----------------- | :---------------------- |
+| Opcode | Reliable Connection (RC) – Acknowledge (17) | 操作码：表示这是一个**可靠连接(RC)类型的确认(ACK)包**，用于 RC 队列对的流量控制与确认 |
+| Solicited Event | False | Solicited Event 位：为 0 表示这不是一个 Solicited 事件，不会触发接收方的完成队列事件通知 |
+| MigReq | False | 迁移请求位：为 0 表示没有请求队列对迁移 |
+| Pad Count | 0 | 填充计数：表示数据包末尾没有额外填充字节（IB 要求数据包长度为 4 字节对齐） |
+| Header Version | 0 | 头版本号：固定为 0，代表当前 IB 协议版本 |
+| Partition Key | 65535 (0xFFFF) | 分区键：0xFFFF 是默认分区，用于 IB 子网的分区隔离，多数场景使用默认值 |
+| Reserved | 00 | 保留位：预留字段，当前未使用，值为 0 |
+| Destination Queue Pair | 0x000005 | 目标队列对(QP)号：标识该 ACK 包对应的接收端 QP，用于路由到正确的队列对上下文 |
+| Acknowledge Request | False | ACK 请求位：为 0 表示不要求接收方立即回复 ACK |
+| Reserved (7 bits) | 0 | 保留位：7 个预留比特，值为 0 |
+| Packet Sequence Number (PSN) | 16159508 | 数据包序列号：RC 传输中用于排序、丢包检测和重传的核心标识，接收方通过 PSN 校验数据包顺序 |
+
+**AETH – ACK Extended Transport Header (ACK 扩展传输头)**
+| 字段 | 值 | 说明 |
+| :--------------------- | :------------------- | :----------------------- |
+| Syndrome | 96, Nak | Syndrome 字段：高 3 位为 Opcode，低 4 位为 Error Code，组合值 96 表示这是一个**NAK（否定确认）包** |
+| OpCode (AETH) | Nak (3) | AETH 操作码：3 代表 NAK，说明这是一个错误通知包，而非正常 ACK |
+| Error Code | PSN Sequence Error (0) | 错误码：0 表示**PSN 序列号错误**，即接收方收到的数据包 PSN 不符合预期（出现乱序、丢包或重复） |
+| Message Sequence Number | 0 | 消息序列号：用于多消息传输的场景，此处为 0 表示无额外消息序号 |
+| Invariant CRC | 0x1f11d0bb | 不变量 CRC：对 BTH 及固定部分头的校验和，用于校验数据包头的完整性，防止传输错误 |

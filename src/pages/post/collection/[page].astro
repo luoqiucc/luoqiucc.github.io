@@ -1,18 +1,18 @@
 ---
 import type { GetStaticPathsOptions } from "astro"
 import { getCollection } from "astro:content"
-import { PostCard } from "@/components/post-card"
 import IndexLayout from "@/layouts/index.astro"
 import { PostPagination } from "@/components/pagination"
+import { CollectionCard } from "@/components/collection-card"
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const essays = (
+  const Collection = (
     await getCollection("posts", ({ data }) => {
-      return data.category == "essay"
+      return data.category == "collection"
     })
   ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 
-  return paginate(essays, { pageSize: 12 })
+  return paginate(Collection, { pageSize: 12 })
 }
 
 const { page } = Astro.props
@@ -22,12 +22,12 @@ const { page } = Astro.props
   <h1
     class="mt-12 mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight text-balance"
   >
-    随笔
+    藏品
   </h1>
-  <div class="grid grid-cols-1 gap-4">
-    {page.data.map((post) => <PostCard post={post} />)}
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    {page.data.map((post) => <CollectionCard post={post} />)}
   </div>
   <div class="my-8">
-    <PostPagination page={page} category="post/essay" />
+    <PostPagination page={page} category="post/collection" />
   </div>
 </IndexLayout>

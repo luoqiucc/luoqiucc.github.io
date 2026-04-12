@@ -8,8 +8,13 @@ const posts = defineCollection({
     title: z.string(),
     subtitle: z.string(),
     abstract: z.string(),
-    category: z.enum(["essay", "paper", "computer-networks"]).default("essay"),
+    category: z
+      .enum(["essay", "paper", "computer-networks", "collection"])
+      .default("essay"),
     pubDate: z.coerce.date(),
+    cover: z
+      .string()
+      .default("https://pic1.imgdb.cn/item/6918497d3203f7be000863a5.png"),
   }),
 })
 

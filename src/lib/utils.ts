@@ -45,6 +45,8 @@ export function formatCategory(category: string) {
       return "论文研读"
     case "computer-networks":
       return "计算机网络"
+    case "collection":
+      return "藏品"
     default:
       return "未知"
   }
