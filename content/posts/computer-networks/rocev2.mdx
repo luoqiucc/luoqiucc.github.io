@@ -1,7 +1,7 @@
 ---
-title: "RoCEv2协议数据包与控制包详解"
-subtitle: ""
-abstract: ""
+title: "RoCEv2协议数据包与控制包分析"
+subtitle: "基于 Intel E810-C 网络适配器"
+abstract: "本文通过抓包分析了DCQCN数据包与控制包的形式以及运行机制"
 category: "computer-networks"
 pubDate: 2026-04-07
 ---
@@ -12,6 +12,37 @@ pubDate: 2026-04-07
 
 ### CNP
 
+```
+InfiniBand
+  Base Transport Header
+    Opcode: Congestion Notification Packet (129)
+    0... .... = Solicited Event: False
+    .0.. .... = MigReq: False
+    ..00 .... = Pad Count: 0
+    .... 0000 = Header Version: 0
+    Partition Key: 65535
+    Reserved: 00
+    Destination Queue Pair: 0x000005
+    0... .... = Acknowledge Request: False
+    .000 0000 = Reserved (7 bits): 0
+    Packet Sequence Number: 0
+```
+
+**Base Transport Header (BTH，基础传输头)**
+
+| 字段                   | 值                      | 说明                                                                                                                                    |
+| :--------------------- | :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| Opcode                 | 129 (十六进制 0x81)     | 操作码，标识数据包的类型。0x81 是 RoCEv2 中 **CNP (Congestion Notification Packet，拥塞通知包)** 的专用操作码。                         |
+| Solicited Event        | False                   | 是否为“请求通知事件”的包。若为 True，接收端在处理完该包后，会向发送端生成一个完成事件通知。CNP 包不需要触发事件，因此为 False。         |
+| MigReq                 | False                   | 迁移请求标志，用于 RDMA 连接迁移（如 QP 迁移），表示是否请求切换到新路径。普通数据/CNP 包不涉及迁移，因此为 False。                     |
+| Pad Count              | 0                       | 填充字节数，表示需要在数据后补充多少字节，使整个数据包长度按 4 字节对齐。CNP 包长度本身已经对齐，所以值为 0。                           |
+| Header Version         | 0                       | 传输头版本号，标识当前 BTH 的协议版本，当前标准版本为 0。                                                                               |
+| Partition Key          | 65535 (十六进制 0xFFFF) | 分区键 (P_Key)，用于在同一个物理网络上划分逻辑隔离的“分区”。0xFFFF 表示该包属于默认的、允许所有节点加入的“全开放分区”。                 |
+| Reserved               | 00                      | 协议预留字段，无实际功能，必须设置为 0。                                                                                                |
+| Destination Queue Pair | 0x000005                | 目标队列对号 (Dest QPN)，指定该数据包要送达的远程 RDMA 队列对（QP）的编号。发送端收到 CNP 后，会根据该 QPN 找到对应的流并降低发送速率。 |
+| Acknowledge Request    | False                   | 是否需要接收端回复 ACK。若为 True，接收端需发送确认包。CNP 是单向通知，不需要回复，因此为 False。                                       |
+| Reserved (7 bits)      | 0                       | 协议预留字段，无实际功能，必须设置为 0。                                                                                                |
+| Packet Sequence Number | 0                       | 包序列号 (PSN)，用于可靠传输模式下的丢包检测和重传。CNP 包属于无连接的通知消息，不参与可靠传输的序号管理，因此值为 0。                  |
 
 ### NACK
 
