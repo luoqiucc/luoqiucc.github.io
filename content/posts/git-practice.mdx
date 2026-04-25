@@ -1,0 +1,67 @@
+---
+title: "关于Git父子仓库的一些实践"
+subtitle: ""
+abstract: "本文来介绍下我对Git父子仓库的一些管理策略"
+category: "essay"
+pubDate: 2026-04-24
+---
+
+假设我的仓库配置如下
+
+```
+|- project // 父仓库
+      |- code     // 子仓库
+      |- analysis // 子仓库
+```
+
+## 项目建立
+
+先准备好两个子仓库
+
+```shell
+# 配置code, analysis仓库
+
+# 初始化仓库
+git init
+
+# 创建初始提交
+git commit -m "init"
+
+# 添加远程仓库
+git remote add [远程仓库名] [仓库地址]
+
+# 推送到远程仓库
+git push [远程仓库名] [分支名]
+```
+
+两个子仓库准备好后，在project文件夹初始化git仓库并添加上面创建的仓库为子仓库
+
+```shell
+# 配置project仓库并添加子仓库
+
+# 初始化仓库
+git init
+
+# 添加code, analysis仓库为子仓库
+git submodule add [code远程仓库地址] [仓库本地路径]
+git submodule add [analysis远程仓库地址] [仓库本地路径]
+
+# 创建初始提交
+git add .
+git commit -m "init"
+
+# 推送到远程仓库
+git push [远程仓库名] [分支名]
+```
+
+_[仓库本地路径] 为空时默认子模块会被添加到项目子模块同名的目录下。_
+
+## 克隆带有子仓库的项目
+
+在克隆时添加 --recursive 参数，Git会递归的拉取所有父子仓库的内容
+
+```shell
+git clone --recursive [远程仓库地址]
+```
+
+_这里有一个需要注意的地方，使用 --recursive 拉取完成后所有的分支会是一个游离的状态，需要手动切换到你的工作分支。_
