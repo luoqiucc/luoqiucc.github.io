@@ -21,6 +21,7 @@ const posts = defineCollection({
 const moments = defineCollection({
   loader: glob({ base: "./content/moments", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    status: z.string().default("🤔"),
     topic: z.array(z.string()).default([]),
     pubDate: z.coerce.date(),
   }),

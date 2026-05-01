@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content"
+import { ArrowRight } from "lucide-react"
 import IndexLayout from "@/layouts/index.astro"
 import { Button } from "@/components/ui/button"
 import { PostCard } from "@/components/post-card"
@@ -8,36 +9,40 @@ import { MomentCard } from "@/components/moment-card"
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 )
-const latestPosts = posts.slice(0, 5)
+const latestPosts = posts.slice(0, 6)
 
 const moments = (await getCollection("moments")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 )
-const latestMoments = moments.slice(0, 2)
+const latestMoments = moments.slice(0, 4)
 ---
 
 <IndexLayout>
   <div>
-    <div class="flex items-center justify-between">
-      <h3 class="mt-12 mb-8 scroll-m-20 text-2xl font-semibold tracking-tight">
+    <div class="mt-12 mb-8 flex items-center justify-between">
+      <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
         最新动态
       </h3>
-      <Button variant="link">
-        <a href="/moment/1">查看全部</a>
-      </Button>
+      <a href="/moment/1">
+        <Button variant="link">
+          查看全部 <ArrowRight />
+        </Button>
+      </a>
     </div>
     <div class="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
       {latestMoments.map((moment) => <MomentCard moment={moment} />)}
     </div>
   </div>
   <div>
-    <div class="flex items-center justify-between">
-      <h3 class="mt-12 mb-8 scroll-m-20 text-2xl font-semibold tracking-tight">
+    <div class="mt-12 mb-8 flex items-center justify-between">
+      <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
         最新博客
       </h3>
-      <Button variant="link">
-        <a href="/post/1">查看全部</a>
-      </Button>
+      <a href="/post/1">
+        <Button variant="link">
+          查看全部 <ArrowRight />
+        </Button>
+      </a>
     </div>
     <div class="grid grid-cols-1 gap-4">
       {latestPosts.map((post) => <PostCard post={post} />)}

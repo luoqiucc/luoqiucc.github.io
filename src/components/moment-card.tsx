@@ -1,5 +1,4 @@
 import type { CollectionEntry } from "astro:content"
-import { Laugh, Smile } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -21,7 +20,7 @@ function MomentCard({ moment }: Props) {
       <CardHeader>
         <CardDescription>{formatDateEN(moment.data.pubDate)}</CardDescription>
         <CardAction>
-          <Smile />
+          <div className="text-xl">{moment.data.status}</div>
         </CardAction>
       </CardHeader>
       <CardContent>
