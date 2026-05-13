@@ -18,7 +18,9 @@ function MomentCard({ moment }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardDescription>{formatDateEN(moment.data.pubDate)}</CardDescription>
+        <CardDescription className="italic">
+          {formatDateEN(moment.data.pubDate)}
+        </CardDescription>
         <CardAction>
           <div className="text-xl">{moment.data.status}</div>
         </CardAction>

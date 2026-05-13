@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { formatCategory } from "@/lib/utils"
+import { formatCategory, formatDateCN } from "@/lib/utils"
 
 interface Props {
   post: CollectionEntry<"posts">
@@ -19,6 +19,9 @@ function PostCard({ post }: Props) {
     <a href={`/post/${post.id}`}>
       <Card className="max-h-72">
         <CardHeader>
+          <CardDescription className="mb-2">
+            {formatDateCN(post.data.pubDate)}
+          </CardDescription>
           <CardTitle>{post.data.title}</CardTitle>
           <CardDescription>{post.data.subtitle}</CardDescription>
           <CardAction>
