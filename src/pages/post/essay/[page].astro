@@ -1,9 +1,9 @@
 ---
 import type { GetStaticPathsOptions } from "astro"
 import { getCollection } from "astro:content"
-import { PostCard } from "@/components/post-card"
 import IndexLayout from "@/layouts/index.astro"
 import { PostPagination } from "@/components/pagination"
+import { PostCardWrapper } from "@/modules/wrapper/post-card-wrapper"
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const essays = (
@@ -25,7 +25,7 @@ const { page } = Astro.props
     随笔
   </h1>
   <div class="grid grid-cols-1 gap-4">
-    {page.data.map((post) => <PostCard post={post} />)}
+    <PostCardWrapper posts={page.data} />
   </div>
   <div class="my-8">
     <PostPagination page={page} category="post/essay" />

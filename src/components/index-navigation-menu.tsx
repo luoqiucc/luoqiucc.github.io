@@ -38,6 +38,11 @@ function IndexNavigationMenu() {
             <a href="/post/collection/1">藏品</a>
           </NavigationMenuLink>
         </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <a href="/post/achievement/1">成就</a>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   )

@@ -27,4 +27,13 @@ const moments = defineCollection({
   }),
 })
 
-export const collections = { posts, moments }
+const achievements = defineCollection({
+  loader: glob({ base: "./content/achievements", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().default(""),
+    pubDate: z.coerce.date(),
+  }),
+})
+
+export const collections = { posts, moments, achievements }

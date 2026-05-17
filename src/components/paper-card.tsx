@@ -8,7 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { formatDateCN } from "@/lib/utils"
+import { formatCategory, formatDateCN } from "@/lib/utils"
+import { Badge } from "./ui/badge"
 
 interface Props {
   post: CollectionEntry<"posts">
@@ -17,20 +18,23 @@ interface Props {
 function PaperCard({ post }: Props) {
   return (
     <a href={`/post/${post.id}`}>
-      <Card className="h-96">
+      <Card className="max-h-96 border border-primary">
         <CardHeader>
           <CardDescription className="mb-2">
             {formatDateCN(post.data.pubDate)}
           </CardDescription>
           <CardTitle>{post.data.title}</CardTitle>
+          <CardAction>
+            <Badge variant="default">
+              {formatCategory(post.data.category)}
+            </Badge>
+          </CardAction>
         </CardHeader>
         <CardContent className="overflow-y-auto">
           <p>{post.data.abstract}</p>
         </CardContent>
-        <CardFooter>
-          <p>
-            <i>{post.data.subtitle}</i>{" "}
-          </p>
+        <CardFooter className="bg-primary">
+          <p className="text-secondary">{post.data.subtitle}</p>
         </CardFooter>
       </Card>
     </a>
