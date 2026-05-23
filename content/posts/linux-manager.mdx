@@ -1,0 +1,19 @@
+---
+title: "Linux用户管理"
+subtitle: ""
+abstract: "对linux用户管理相关的命令简单记录"
+category: "essay"
+pubDate: 2026-05-20
+---
+
+添加新用户
+
+```shell
+sudo adduser <用户名>
+```
+
+将该用户添加到sudo用户组
+
+```shell
+sudo usermod -aG sudo <用户名>
+```
