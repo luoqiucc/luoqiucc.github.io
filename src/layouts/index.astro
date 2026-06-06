@@ -2,12 +2,12 @@
 import MainLayout from "@/layouts/main.astro"
 import { Header } from "@/modules/header"
 import { Footer } from "@/modules/footer"
-import { SubBanner } from "@/components/banner/sub-banner"
+import { SocialBanner } from "@/components/banner/social-banner"
 ---
 
 <MainLayout>
   <Header client:load />
-  <SubBanner />
+  <SocialBanner />
   <div class="mx-auto h-full w-full max-w-5xl px-4">
     <slot />
   </div>

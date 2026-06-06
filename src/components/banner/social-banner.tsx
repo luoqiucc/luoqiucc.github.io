@@ -5,7 +5,7 @@ import Facebook from "@/assets/social/facebook.svg"
 
 function SocialBanner() {
   return (
-    <div className="flex justify-center bg-blue-600 py-4">
+    <div className="flex h-16 items-center justify-center bg-blue-600">
       <a target="_blank" href="https://github.com/luoqiucc">
         <img className="mx-2 h-8 w-8" src={Github.src} alt="Github" />
       </a>

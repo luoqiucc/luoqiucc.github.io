@@ -1,4 +1,3 @@
-import { SocialBanner } from "@/components/banner/social-banner"
 import {
   Empty,
   EmptyContent,
@@ -19,7 +18,6 @@ function Footer() {
           <div className="grid grid-cols-4 gap-2"></div>
         </EmptyContent>
       </Empty>
-      <SocialBanner />
     </div>
   )
 }

@@ -1,0 +1,56 @@
+---
+title: "REPS: Recycled Entropy Packet Spraying for Adaptive Load Balancing and Failure Mitigation"
+subtitle: "EUROSYS '26: Proceedings of the 21st European Conference on Computer Systems"
+abstract:
+  "Next-generation datacenters require highly efficient network load balancing to
+  manage the growing scale of artificial intelligence (AI) training and general datacenter
+  traffic. However, existing Ethernet-based solutions, such as Equal Cost MultiPath (ECMP)
+  and oblivious packet spraying (OPS), struggle to maintain high network utilization due to
+  both increasing traffic demands and the expanding scale of datacenter topologies, which
+  also exacerbate network failures. To address these limitations, we propose REPS, a
+  lightweight decentralized per-packet adaptive load balancing algorithm designed to optimize
+  network utilization while ensuring rapid recovery from link failures. REPS adapts to
+  network conditions by caching good-performing paths. In case of a network failure, REPS
+  re-routes traffic away from it in less than 100 microseconds. REPS is designed to be
+  deployed with next-generation out-of-order transports, such as Ultra Ethernet, and uses
+  less than 25 bytes of per-connection state regardless of the topology size. We extensively
+  evaluate REPS in large-scale simulations and FPGA-based NICs."
+category: "paper"
+pubDate: 2026-06-05
+---
+
+## 简介
+
+这篇文章发表于 EUROSYS '26，主要作者来着苏黎世联邦理工，微软，以及罗马第一大学。该文章提出了一个轻量级的去中心化逐跳自适应负载均衡算法 REPS，旨在解决现有现有以太网解决方案在日益增长的AI流量和通用数据中心流量存在的问题。另外，REPS更多的要与下一代乱序传输技术（Ultra Ethernet，超以太网）一起部署，它很大程度上依赖于该技术提供的乱序接收能力。
+
+## 现有解决方案的不足
+
+在训练集群规模急剧增加时，我们会面临以下问题：
+
+- 与传统工作负载相比，集体通信中的流量和突发性增加。
+- 在大规模网络中管理无损、有序网络的复杂性和开销，尤其是在链路故障和性能下降的情况下。
+
+这些问题在实际场景中的具体体现如下：
+
+- 当前主流的ECMP负载均衡机制存在哈希冲突的问题，该现象会导致流被哈希到同一路径，造成拥塞和队列堆积，严重时可能导致丢包，同时无法充分利用空闲链路，浪费带宽资源。
+
+当前解决方案的不足：
+
+- 流片段负载均衡机制：为顺序网络设计，易受到冲突影响，并且每个连接都需要维护状态，占用大量内存。
+- 包级别负载均衡机制：在网络故障存在的情况下无法进行有效的负载均衡，其中MP-RDMA需要每包确认ACK，这也限制了他的部署。
+
+## 超以太网（Ultra Ethernet）
+
+面向大规模 AI 智算 + HPC 高性能计算的开放高性能以太网新标准，他的定位是既有 InfiniBand 的超低时延 / 无损性能，同时又保留传统以太网低成本、全生态、大规模组网优势。他和 RoCE、IB verbs 这些传输协议可以说是一类东西。
+
+## REPS的设计
+
+该机制的关键：
+
+- 传输层支持乱序乱序交付（超以太网）。
+- 用ACK上打ECN标记。
+- 动态调整熵值（EV）。
+
+_\*EV: 作为hash函数的输入之一_
+
+### 运行逻辑
