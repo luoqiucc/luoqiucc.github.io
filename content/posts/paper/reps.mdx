@@ -19,6 +19,8 @@ category: "paper"
 pubDate: 2026-06-05
 ---
 
+import { MdxImage } from "@/components/mdx/mdx-image"
+
 ## 简介
 
 这篇文章发表于 EUROSYS '26，主要作者来着苏黎世联邦理工，微软，以及罗马第一大学。该文章提出了一个端侧包级别的自适应负载均衡算法 REPS，旨在解决现有现有以太网解决方案在日益增长的AI流量和通用数据中心流量存在的问题。另外，REPS更多的要与下一代乱序传输技术（Ultra Ethernet，超以太网）一起部署，它很大程度上依赖于该技术提供的乱序接收能力。
@@ -43,6 +45,14 @@ pubDate: 2026-06-05
 
 面向大规模 AI 智算 + HPC 高性能计算的开放高性能以太网新标准，他的定位是既有 InfiniBand 的超低时延 / 无损性能，同时又保留传统以太网低成本、全生态、大规模组网优势。他和 RoCE、IB verbs 这些传输协议可以说是一类东西。
 
+<MdxImage
+  url="https://pic1.imgdb.cn/item/6a2537e4d71dee7c94198e35.png"
+  ratio={16 / 8.2}
+  description="超以太网数据包结构"
+/>
+
+上图便是超以太网的数据包结构，可以看到，他在传统以太网数据包的udp头后加了一层自己的专属头。
+
 ## REPS的设计
 
 该机制的关键：
@@ -53,6 +63,12 @@ pubDate: 2026-06-05
 - 一个用于存储“好路径”EV值的环形缓冲区 REPS Buffer（好路径EV值缓冲区）。
 
 _\*EV: 作为hash函数的输入之一_
+
+<MdxImage
+  url="https://pic1.imgdb.cn/item/6a251352d71dee7c94190827.png"
+  ratio={16 / 10}
+  description="REPS设计概览"
+/>
 
 ### 1. 运行过程
 

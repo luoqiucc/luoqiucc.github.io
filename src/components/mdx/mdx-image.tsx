@@ -14,8 +14,8 @@ function MdxImage({
   ratio = 16 / 9,
 }: Props) {
   return (
-    <div>
-      <AspectRatio ratio={ratio} className="rounded-md bg-muted">
+    <div className="my-8">
+      <AspectRatio ratio={ratio} className="rounded-md border bg-muted">
         <img
           src={url}
           alt={description}

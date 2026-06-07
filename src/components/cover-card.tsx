@@ -7,7 +7,7 @@ interface Props {
 function CoverImage({ url }: Props) {
   return (
     <div>
-      <AspectRatio ratio={16 / 8} className="rounded-md bg-muted">
+      <AspectRatio ratio={16 / 9} className="rounded-md bg-muted">
         <img
           src={url}
           alt="cover"
