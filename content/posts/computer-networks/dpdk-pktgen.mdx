@@ -1,0 +1,44 @@
+---
+title: "DPDK发包工具DPDK-Pktgen使用指南"
+subtitle: ""
+abstract: "记一下DPDK发包工具DPDK-Pktgen的使用以及本人踩的一些坑"
+category: "essay"
+pubDate: 2026-06-11
+---
+
+## 先决条件
+
+- DPDK已安装并且使用支持的网卡
+- libbsd (sudo apt install libbsd-dev)
+- python3.x
+
+## 安装
+
+```shell
+git clone https://github.com/pktgen/Pktgen-DPDK.git
+cd Pktgen-DPDK
+meson setup build
+ninja -C build
+sudo ninja -C build install
+```
+
+## 运行默认配置的Pktgen
+
+```shell
+sudo ./tools/run.py -s default
+sudo ./tools/run.py default
+```
+
+## 其他使用方式
+
+加载PCAP文件运行
+
+```shell
+sudo ./pktgen -l 0-3 -n 4 -a 0000:01:00.0 -- -P -m "[1].0" -s [端口号]:[PCAP文件路径]
+```
+
+加载PKT脚本文件运行
+
+```shell
+sudo ./pktgen -l 0-8 -n 4 -a 0000:01:00.0 -- -P -m "[1:8].0" -f [脚本文件路径]
+```

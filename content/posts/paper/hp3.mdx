@@ -1,0 +1,325 @@
+---
+title: "Switch-Transparent Load Balancing for RDMA Data Centers: A Host-Only Approach"
+subtitle: "IEEE/ACM International Symposium on Quality of Service (IWQoS) 2026"
+abstract: "Remote Direct Memory Access (RDMA) equips
+  modern data centers (DCs) with high-performance data trans-
+  mission. Yet, its potential is often unmet, as the State-Of-The-Art
+  (SOTA) RDMA traffic load balancers struggle to balance high-
+  performance with practicability. In this paper, we first analyse
+  existing RDMA-aware load balancers, examining their trade-offs
+  across four key metrics: path utilization, packet order preserva-
+  tion, implementation overhead, and deployment complexity. We
+  then present HP3, a host-based load balancer designed to excel
+  in all these dimensions. HP3 combines Proactive Path Perception
+  for real-time path state awareness with Reorder Free Rerouting to
+  guarantee in-order packet delivery. It maintains low intrusiveness
+  by complying with the standard RDMA transport layer and
+  activating only during severe congestion. Implemented purely on
+  end-hosts with no switch modifications, HP3 offers a practical
+  solution with modest additional overhead. We prototype HP3
+  using DPDK and commodity RNICs, and evaluate it on a P4-
+  programmable switch testbed. Experiments with diverse data
+  center workloads show that HP3 outperforms SOTA RDMA
+  load balancers by up to 3.4× for typical traffic and 1.3× for
+  AI training traffic."
+category: "paper"
+pubDate: 2026-06-08
+---
+
+import { MdxImage } from "@/components/mdx/mdx-image"
+import { MdxAccordion } from "@/components/mdx-accordion"
+
+## PRESENTATION
+
+Good morning! It's my great honor to stand here today and share our recent research. The topic of my presentation is HP3: Switch-Transparent Load Balancing for RDMA Data Centers — A Host-Only Approach. Before diving into our design and experiments, I'd like to start with the background and practical challenges of RDMA technology in modern data centers.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "大家上午! RDMA 数据中心、无需改动交换机的纯主机负载均衡方案。接下来我将从研究背景、现存挑战、方案设计、核心原理、实验验证以及未来展望几个部分展开介绍。",
+    },
+  ]}
+  client:load
+/>
+
+Nowadays, cloud computing, large-scale artificial intelligence training, distributed storage and real-time big data services have become the mainstream workloads of modern data centers. All these applications put forward extremely demanding requirements for network performance: ultra-low latency, high throughput and low CPU consumption. Under such trends, Remote Direct Memory Access, namely RDMA, has gradually become a foundational network technology for high-performance data centers. Different from traditional TCP/IP networks, RDMA adopts kernel bypass and zero-copy data transmission. It directly completes data interaction between the memory of two end hosts without the participation of the operating system kernel. This mechanism enables RDMA to achieve microsecond-level end-to-end latency, line-rate bandwidth utilization and negligible CPU overhead on servers. Therefore, RDMA has been widely deployed in the infrastructure of major cloud vendors and AI computing clusters, supporting core businesses such as large language model training, distributed file systems and in-memory databases.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "如今，云计算、大规模人工智能训练、分布式存储与实时大数据业务，已经成为现代数据中心的主流负载。这类应用对网络提出了极高的要求：超低时延、高吞吐、服务器低算力消耗。在此背景下，远程直接内存访问（RDMA） 逐步成为高性能数据中心的核心基础网络技术。和传统 TCP/IP 网络不同，RDMA 采用内核旁路与零拷贝传输机制，数据可以直接在两台终端主机的内存之间交互，全程无需操作系统内核介入。这一特性让 RDMA 实现了微秒级端到端时延、线速带宽利用，同时服务器 CPU 开销几乎可以忽略不计。目前，国内外各大云厂商、AI 算力集群都已大规模部署 RDMA，支撑大语言模型训练、分布式文件系统、内存数据库等核心业务。",
+    },
+  ]}
+  client:load
+/>
+
+However, despite its outstanding performance advantages, RDMA still cannot fully release its potential in today’s large-scale data centers. Most modern data centers adopt the classic Clos topology, which is a multi-path network architecture designed to provide abundant redundant links and strong path diversity. The original intention of this design is to fully utilize all network links and improve the overall network capacity. But in actual RDMA deployment, this multi-path advantage is severely restricted by traditional traffic load balancing mechanisms, and the core bottleneck lies in load balancing.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "但即便拥有如此出色的性能，RDMA 在现代大型数据中心中依旧难以发挥全部潜力。当下绝大多数数据中心都采用经典的 Clos 多级架构，这是一种天然具备多路径特性的网络，设计初衷就是提供大量冗余链路、丰富路径选择，以此提升全网整体转发能力。然而在 RDMA 实际落地过程中，多路径的优势被传统流量负载均衡机制严重制约，负载均衡问题也成为了限制 RDMA 性能释放的核心瓶颈。",
+    },
+  ]}
+  client:load
+/>
+
+The most widely used load balancing scheme in current data centers is ECMP, Equal-Cost Multi-Path routing. ECMP relies on fixed hash rules to distribute all packets belonging to a single flow onto one exclusive path. This method can naturally guarantee packet order and requires no modification to existing switches, so it has excellent compatibility. But its fatal flaw is the lack of dynamic congestion awareness. Once multiple hot flows are hashed to the same link, hash collisions occur. Some links will be overloaded and fall into continuous congestion, while a large number of idle alternative paths are left unused. This not only causes serious waste of network bandwidth resources, but also sharply increases queuing delay on congested links. Worse still, persistent congestion will trigger PFC, Priority Flow Control, and even lead to PFC deadlocks, which directly destroy the low-latency feature of RDMA. This problem becomes particularly prominent in skewed traffic scenarios: for example, parameter synchronization during large-scale AI training, and hotspot data access in distributed storage clusters. In these scenarios, traffic distribution is extremely unbalanced, and the performance of ECMP drops dramatically, greatly weakening the practical value of RDMA.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "当前数据中心使用最广泛的负载均衡技术是等价多路径路由（ECMP）。ECMP 依靠固定哈希规则，将同一条数据流的所有报文转发至唯一一条路径上。这种方式天然能够保证报文有序，且无需改造现有交换机，兼容性极强。但它的致命短板在于不具备动态拥塞感知能力。当多条热点流被哈希映射到同一条链路时，就会发生哈希冲突：部分链路过载拥塞，而大量闲置的备选路径却始终得不到利用。这不仅造成带宽资源严重浪费，还会让拥塞链路的排队时延急剧攀升。更严重的是，持续拥塞会触发优先级流量控制（PFC），甚至引发 PFC 死锁，直接破坏 RDMA 低时延的核心优势。在流量倾斜的场景下，这一问题会被进一步放大：比如 AI 训练过程中的参数同步、分布式存储的热点数据访问，这类场景流量分布极不均衡，ECMP 的性能会大幅下跌，RDMA 的实际使用价值也大打折扣。",
+    },
+  ]}
+  client:load
+/>
+
+To solve the above pain points, academia and the industry have proposed a variety of RDMA-oriented load balancing solutions in recent years. After sorting out and analyzing existing state-of-the-art schemes, we find that they all fall into a typical dilemma: performance and practicality cannot be achieved at the same time.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "为了解决上述难题，近年来学术界和产业界陆续提出了大量面向 RDMA 的负载均衡优化方案。我们对现有主流前沿方案进行梳理分析后发现，它们普遍陷入一个两难困境：高性能与实用性无法兼顾。",
+    },
+  ]}
+  client:load
+/>
+
+On the one hand, many high-performance RDMA load balancers such as DCP, ConWeave, MORS and MP-RDMA can effectively improve path utilization and relieve congestion. But they all have high deployment barriers. Some require upgrading programmable switches and adding complex in-network logic; some need to redesign the internal stack of RNIC, the RDMA network interface card, which involves hardware revision and long-term compatibility adaptation; others depend on real-time network telemetry systems, which greatly increases operation and maintenance complexity. All these factors make these solutions difficult to be popularized in commercial mass-produced data centers.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "一方面，DCP、ConWeave、MORS、MP-RDMA 等高性能 RDMA 负载均衡方案，虽然可以有效提升路径利用率、缓解网络拥塞，但部署门槛极高。部分方案需要升级可编程交换机、部署复杂的网络内部逻辑；部分方案需要重新设计 RDMA 网卡（RNIC）的内部协议栈，涉及硬件改版与长期的兼容性适配；还有方案依赖全网实时遥测系统，极大提升了运维难度。种种限制，让这类技术很难在商用量产数据中心中大规模推广。",
+    },
+  ]}
+  client:load
+/>
+
+On the other hand, some lightweight fine-grained load balancing schemes like RPS, AR and DRILL split traffic at the per-packet level. They can well disperse load and balance link throughput, but they bring another critical problem: severe packet reordering. The transmission semantics of RDMA strictly require in-order packet delivery. When out-of-order packets appear, RNIC will misjudge them as packet loss and initiate a large number of unnecessary retransmissions. A large number of spurious retransmissions will occupy valid bandwidth, form NACK storms, and eventually cause the overall throughput to collapse. Besides, flowlet-based schemes such as LetFlow and CONGA are also not applicable to RDMA. Because RNIC will actively pace the sending of packets, there is almost no interval between consecutive packets. As a result, there is no available time window for flowlet splitting and path switching.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "另一方面，RPS、AR、DRILL 等轻量级细粒度负载均衡方案，采用逐包分流的思路，能够很好地分散流量、均衡链路负载，却带来了新的致命问题 ——严重的报文乱序。RDMA 的传输语义严格要求报文按序到达，一旦出现乱序报文，RDMA 网卡会将其误判为报文丢失，进而触发大量无效重传。海量的无效重传会挤占有效带宽，形成否定应答风暴，最终导致全网吞吐断崖式下跌。除此之外，以 LetFlow、CONGA 为代表的流片类方案也无法适配 RDMA 场景：RDMA 网卡会主动对报文进行调速，连续报文之间几乎不存在时间间隔，流片拆分与路径切换完全没有可行的时间窗口。",
+    },
+  ]}
+  client:load
+/>
+
+Faced with this series of contradictions and limitations, we put forward the core research question of this work: Is it possible to design a RDMA load balancer that needs no modification to commercial switches, runs purely on end hosts with only moderate extra overhead, and simultaneously realizes high path utilization, strict packet order preservation and easy deployment? After repeated research, design and verification, our answer is yes, and that is the HP3 system we proposed.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "面对这一系列矛盾与技术局限，我们提出了本研究的核心问题：能否设计一套完全运行在终端主机上、无需改造商用交换机、仅产生适度主机开销，同时兼顾高路径利用率、严格保序、易部署的 RDMA 负载均衡方案？ 经过多轮研究、设计与验证，我们给出了肯定的答案，这就是本次介绍的 HP3 系统。",
+    },
+  ]}
+  client:load
+/>
+
+Next, I will elaborate on the overall architecture, core modules and working mechanism of HP3.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content: "接下来，我详细讲解 HP3 的整体架构、核心模块与工作原理。",
+    },
+  ]}
+  client:load
+/>
+
+HP3 is a host-only, switch-transparent load balancing system. It runs completely on end servers and is fully compatible with standard RDMA protocols and existing commercial switches. Its core consists of two tightly coupled functional modules: Proactive Path Perception (PPP) and Reorder Free Rerouting (RFR). The two modules cooperate with each other to complete path monitoring, path probing and traffic migration step by step.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "HP3 是一套纯主机部署、对交换机完全透明的负载均衡系统，全程运行在业务服务器上，完全兼容标准 RDMA 协议与现有商用交换机。系统主要由两个深度协同的核心模块组成：主动路径感知模块（PPP） 和无乱序重路由模块（RFR）。两个模块分工协作，依次完成路径监控、备选路径探测与流量平滑迁移。",
+    },
+  ]}
+  client:load
+/>
+
+First of all, let’s introduce the Proactive Path Perception module, or PPP. The main responsibilities of PPP are real-time path status monitoring and dynamic alternative path discovery. It works in two phases: Incumbent Path Monitoring and Alternative Path Discovery.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "首先介绍主动路径感知模块（PPP）。该模块主要负责实时监测当前链路状态，并动态发现优质备选路径，整体分为当前路径监测和备选路径探测两个阶段。",
+    },
+  ]}
+  client:load
+/>
+
+In the Incumbent Path Monitoring phase, PPP continuously monitors ECN, Explicit Congestion Notification marks carried on ACK packets returned by the receiver. We set a congestion tolerance threshold. Only when we detect that ECN marks appear continuously for multiple monitoring cycles, which means the standard RDMA congestion control mechanism DCQCN has failed to relieve persistent congestion, will we judge that the current path is severely congested. At this moment, PPP will temporarily suspend data transmission to avoid further deterioration of congestion, and immediately start the Alternative Path Discovery phase.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "在当前路径监测阶段，PPP 会持续解析接收端返回的应答报文，提取其中的显式拥塞通知（ECN） 标记。我们设置了合理的拥塞容忍阈值：当检测到 ECN 标记在多个监测周期内连续出现时，就判定标准 RDMA 拥塞控制算法 DCQCN 已经无法缓解持续拥塞，当前链路陷入严重拥塞。此时 PPP 会临时暂停数据发送，避免拥塞进一步恶化，并立刻启动备选路径探测流程。",
+    },
+  ]}
+  client:load
+/>
+
+In the Alternative Path Discovery phase, we generate a batch of lightweight probe packets. By configuring different UDP source ports for these probes, we use the native ECMP hash function of switches to distribute probe packets to different physical paths. The receiver will feed back path information through NACK packets. By analyzing the first returned NACK, we can quickly lock the path with the lowest latency and the lightest load. It is worth mentioning that HP3 makes full use of the idle time during RDMA connection establishment. When the QP, Queue Pair, completes connection handshake and enters the ready-to-send state, the upper-layer application usually performs memory registration operations. We turn this inherent latency into a probing window to complete path detection in advance, so that the official data flow can select the optimal path from the very beginning and avoid blind routing.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "在备选路径探测阶段，系统生成一批轻量级探测报文。通过为探测报文配置不同的 UDP 源端口，借助交换机原生的 ECMP 哈希机制，将探测报文分发到不同的物理路径。接收端会通过否定应答报文（NACK）回传路径状态信息。我们解析最先到达的 NACK 报文，就能快速锁定时延最低、负载最轻的最优路径。值得一提的是，HP3 充分利用了 RDMA 连接建立的空闲间隙：当 RDMA 队列对（QP）完成握手、进入可发送状态后，上层应用通常会执行内存注册操作。我们将这段固有的等待时延转化为探测窗口，提前完成路径检测，让正式数据流从一开始就选择最优路径，彻底避免传输初期的盲目选路。",
+    },
+  ]}
+  client:load
+/>
+
+The second core module is Reorder Free Rerouting, RFR, which is the key to solving the packet reordering problem. Based on the path quality results fed back by PPP, RFR adopts two targeted strategies: Conservative Switching and Fast Recovery.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "第二个核心模块是无乱序重路由模块（RFR），这也是解决报文乱序问题的关键。RFR 结合 PPP 反馈的路径质量结果，设计了两种针对性调度策略：保守切换与快速恢复。",
+    },
+  ]}
+  client:load
+/>
+
+When PPP finds a high-quality uncongested alternative path, RFR executes the Conservative Switching strategy. We will not switch the path immediately. Instead, we keep waiting until all in-flight packets on the original path receive confirmation from the receiver. Only after the original path is completely emptied, do we migrate all subsequent data traffic to the new optimal path. This mechanism fundamentally ensures the in-order delivery of packets and completely eliminates reordering risks. Meanwhile, we appropriately raise the sending rate to fully utilize the bandwidth of the new idle path.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "当 PPP 探测到优质且无拥塞的备选路径时，RFR 执行保守切换策略。我们不会立刻切换传输路径，而是持续等待，直至原路径上所有在途报文都收到接收端确认。只有当原路径报文全部传输完毕后，才将后续所有业务流量迁移至新的最优路径。这套机制从根源上保证报文按序交付，彻底消除乱序风险。同时，我们会适当提升发送速率，充分利用新路径的空闲带宽。",
+    },
+  ]}
+  client:load
+/>
+
+If the probing result shows that all alternative paths are also congested, or the original path is still the best choice, RFR will trigger the Fast Recovery strategy. We resume data transmission on the original path immediately, roll back the sending rate to the state before suspension, and stop all path probing behaviors. This can effectively prevent frequent path switching, avoid network oscillation, and ensure the stable operation of the whole network.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "如果探测结果显示所有备选路径均处于拥塞状态，或是原路径依旧是全局最优选择，RFR 则触发快速恢复策略。系统立即切回原路径恢复数据传输，将发送速率回退至暂停前的状态，并终止所有路径探测行为。该策略可以有效防止频繁切换路径引发网络震荡，保障全网稳定运行。",
+    },
+  ]}
+  client:load
+/>
+
+After finishing the design, we implemented a complete HP3 prototype based on DPDK and commercial off-the-shelf RNICs. We built a dual-layer Leaf-Spine Clos network test platform with P4 programmable switches, and also conducted large-scale simulation experiments based on NS-3. We selected multiple typical workloads to evaluate the performance, including general data center workloads such as AliCloud Storage, Meta Hadoop, Data Mining and Web Search, as well as classic AI collective communication workloads: AllReduce and AllToAll. We compared HP3 with mainstream schemes including ECMP, LetFlow, RPS, AR and state-of-the-art ConWeave.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "完成整体设计后，我们基于数据平面开发套件（DPDK）和商用 RDMA 网卡搭建了 HP3 原型系统。实验平台分为两部分：一是基于 P4 可编程交换机搭建的双层叶脊（Leaf-Spine）Clos 网络硬件测试床；二是基于 NS-3 搭建的大规模仿真环境。我们选取了多类典型数据中心负载开展评测，包括阿里云存储、Meta Hadoop、数据挖掘、网页检索等通用业务负载，以及 AllReduce、AllToAll 两类 AI 集群经典集合通信负载。对照组选用 ECMP、LetFlow、RPS、AR 以及前沿方案 ConWeave 等主流负载均衡算法。",
+    },
+  ]}
+  client:load
+/>
+
+The experimental results fully verify the superiority of HP3. In hardware micro-benchmark tests, when hash collision causes link congestion, HP3 can quickly complete path migration. After HP3 is enabled, the ECN marking ratio drops to zero, the RTT jitter is completely eliminated and stabilized at a low level, and the throughput of competing flows is fully restored to the physical line rate. The Flow Completion Time is reduced by nearly half, and the transmission efficiency is significantly improved.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "实验结果充分验证了 HP3 的综合性能优势。在硬件微基准测试中，当哈希冲突导致链路拥塞时，HP3 可以快速完成路径迁移。开启 HP3 后，链路 ECN 拥塞标记率直接降至零，往返时延（RTT）抖动彻底消失并稳定在低水平，相互竞争的数据流吞吐恢复至物理线速，流完成时间缩短近一半，传输效率大幅提升。",
+    },
+  ]}
+  client:load
+/>
+
+In large-scale simulation experiments of general data center workloads, HP3 achieves the lowest average FCT slowdown and 99th-percentile FCT slowdown under different traffic loads. Compared with existing optimal schemes, HP3 improves overall performance by up to 3.4 times. For AI training workloads with strong burstiness and synchronization, HP3 also shows outstanding adaptability. For AllReduce and AllToAll scenarios which are critical for large model training, HP3 reduces Job Completion Time obviously, with performance improvement reaching 1.3 times compared with contrast schemes. At the same time, HP3 effectively suppresses packet reordering, avoids a large amount of redundant retransmission traffic, and improves the effective utilization of bandwidth.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "在通用数据中心负载的大规模仿真实验中，面对不同流量负载强度，HP3 实现了最低的平均流完成时间增速与 99 分位尾流时延。相较于现有最优方案，整体性能最高提升3.4 倍。针对高突发、强同步特性的 AI 训练负载，HP3 同样表现出极强的适配能力。在大模型训练核心的 AllReduce、AllToAll 场景下，HP3 显著降低任务完成时间，相比对照组性能提升1.3 倍。同时，HP3 有效抑制了报文乱序问题，规避了大量冗余重传流量，带宽有效利用率得到明显优化。",
+    },
+  ]}
+  client:load
+/>
+
+For our future research plans, we have two main directions. First, we plan to offload the core logic of PPP and RFR modules to DPU, Data Processing Unit, to further reduce the CPU overhead of host servers. Second, we will design adaptive parameter tuning algorithms to make HP3 automatically adjust congestion thresholds and probing strategies according to dynamic network changes, so as to adapt to more complex and diverse large-scale cluster environments.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "对于后续研究，我们规划了两个主要方向：第一，将 PPP 与 RFR 的核心逻辑下沉至数据处理单元（DPU）进行硬件卸载，进一步削减服务器主机的 CPU 开销；第二，设计自适应参数调优算法，让 HP3 能够根据网络动态变化，自动调整拥塞阈值、探测策略，适配规模更大、场景更复杂的集群环境。",
+    },
+  ]}
+  client:load
+/>
+
+Finally, on behalf of our whole team, I would like to thank all the teachers and experts for your listening. We also welcome everyone to put forward valuable comments and questions. Thank you very much!
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "最后，我代表整个研究团队，感谢各位老师、专家的聆听。也欢迎大家提出宝贵意见与问题，我们一同交流探讨。谢谢大家！",
+    },
+  ]}
+  client:load
+/>
