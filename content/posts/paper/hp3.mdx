@@ -39,7 +39,7 @@ Good morning! It's my great honor to stand here today and share our recent resea
       value: "translate",
       trigger: "中文译文",
       content:
-        "大家上午! RDMA 数据中心、无需改动交换机的纯主机负载均衡方案。接下来我将从研究背景、现存挑战、方案设计、核心原理、实验验证以及未来展望几个部分展开介绍。",
+        "大家上午! RDMA 数据中心、无需改动交换机的纯主机负载均衡方案。接下来我将从研究背景、现存挑战、方案设计、核心原理、实验验证几个部分展开介绍。",
     },
   ]}
   client:load
@@ -73,7 +73,7 @@ However, despite its outstanding performance advantages, RDMA still cannot fully
   client:load
 />
 
-The most widely used load balancing scheme in current data centers is ECMP, Equal-Cost Multi-Path routing. ECMP relies on fixed hash rules to distribute all packets belonging to a single flow onto one exclusive path. This method can naturally guarantee packet order and requires no modification to existing switches, so it has excellent compatibility. But its fatal flaw is the lack of dynamic congestion awareness. Once multiple hot flows are hashed to the same link, hash collisions occur. Some links will be overloaded and fall into continuous congestion, while a large number of idle alternative paths are left unused. This not only causes serious waste of network bandwidth resources, but also sharply increases queuing delay on congested links. Worse still, persistent congestion will trigger PFC, Priority Flow Control, and even lead to PFC deadlocks, which directly destroy the low-latency feature of RDMA. This problem becomes particularly prominent in skewed traffic scenarios: for example, parameter synchronization during large-scale AI training, and hotspot data access in distributed storage clusters. In these scenarios, traffic distribution is extremely unbalanced, and the performance of ECMP drops dramatically, greatly weakening the practical value of RDMA.
+We conducted a series of simulation and practical experiments to reveal the defects of existing RDMA load balancing schemes, as illustrated in the following figures. Figure 2 compares the link throughput imbalance of different methods under various workloads, and Figure 3 presents their normalized goodput. We can see that ECMP and LetFlow adopt static routing or flowlet-based scheduling, resulting in extremely high throughput imbalance. The link load is highly uneven, most multipath resources are left idle, and the overall bandwidth utilization is poor. In contrast, fine-grained per-packet scheduling schemes like RPS and AR can distribute traffic evenly across links and achieve perfect load balancing. However, frequent path switching leads to severe packet reordering. RDMA regards out-of-order packets as packet loss and triggers a large number of spurious retransmissions, which drastically reduces the actual goodput. In conclusion, traditional RDMA load balancing schemes have obvious limitations and fail to achieve a good balance among load distribution, in-order packet delivery and overall network performance.
 
 <MdxAccordion
   items={[
@@ -81,13 +81,13 @@ The most widely used load balancing scheme in current data centers is ECMP, Equa
       value: "translate",
       trigger: "中文译文",
       content:
-        "当前数据中心使用最广泛的负载均衡技术是等价多路径路由（ECMP）。ECMP 依靠固定哈希规则，将同一条数据流的所有报文转发至唯一一条路径上。这种方式天然能够保证报文有序，且无需改造现有交换机，兼容性极强。但它的致命短板在于不具备动态拥塞感知能力。当多条热点流被哈希映射到同一条链路时，就会发生哈希冲突：部分链路过载拥塞，而大量闲置的备选路径却始终得不到利用。这不仅造成带宽资源严重浪费，还会让拥塞链路的排队时延急剧攀升。更严重的是，持续拥塞会触发优先级流量控制（PFC），甚至引发 PFC 死锁，直接破坏 RDMA 低时延的核心优势。在流量倾斜的场景下，这一问题会被进一步放大：比如 AI 训练过程中的参数同步、分布式存储的热点数据访问，这类场景流量分布极不均衡，ECMP 的性能会大幅下跌，RDMA 的实际使用价值也大打折扣。",
+        "我们搭建了多组仿真与测试实验，以此直观展现现有 RDMA 负载均衡方案存在的缺陷，大家可以结合这两张图表进行查看。图 2 统计了各类方案在不同业务场景下的链路吞吐量不均衡度，图 3 则展示了对应的归一化有效吞吐量表现。从数据中不难发现，ECMP 和 LetFlow 采用静态路由或依赖流间隙做调度，吞吐量不均衡度始终处于高位，网络链路负载差异极大，大量冗余的多路径资源被闲置，整体带宽利用率偏低。反观 RPS、AR 这类细粒度逐包调度方案，虽然能够把流量均匀分发到所有链路上，实现了负载均衡，但频繁的路径切换会造成严重的数据包乱序。RDMA 机制会将报文乱序误判为数据丢包，进而触发大规模无效重传，最终导致系统实际有效吞吐量大幅下滑。综合两组实验结果能够得出结论：传统 RDMA 负载均衡方案都存在明显短板，始终难以在负载均衡、报文保序传输与整体网络性能三者之间做到有效兼顾。",
     },
   ]}
   client:load
 />
 
-To solve the above pain points, academia and the industry have proposed a variety of RDMA-oriented load balancing solutions in recent years. After sorting out and analyzing existing state-of-the-art schemes, we find that they all fall into a typical dilemma: performance and practicality cannot be achieved at the same time.
+{/* To solve the above pain points, academia and the industry have proposed a variety of RDMA-oriented load balancing solutions in recent years. After sorting out and analyzing existing state-of-the-art schemes, we find that they all fall into a typical dilemma: performance and practicality cannot be achieved at the same time.
 
 <MdxAccordion
   items={[
@@ -127,7 +127,7 @@ On the other hand, some lightweight fine-grained load balancing schemes like RPS
     },
   ]}
   client:load
-/>
+/> */}
 
 Faced with this series of contradictions and limitations, we put forward the core research question of this work: Is it possible to design a RDMA load balancer that needs no modification to commercial switches, runs purely on end hosts with only moderate extra overhead, and simultaneously realizes high path utilization, strict packet order preservation and easy deployment? After repeated research, design and verification, our answer is yes, and that is the HP3 system we proposed.
 
@@ -156,7 +156,7 @@ Next, I will elaborate on the overall architecture, core modules and working mec
   client:load
 />
 
-HP3 is a host-only, switch-transparent load balancing system. It runs completely on end servers and is fully compatible with standard RDMA protocols and existing commercial switches. Its core consists of two tightly coupled functional modules: Proactive Path Perception (PPP) and Reorder Free Rerouting (RFR). The two modules cooperate with each other to complete path monitoring, path probing and traffic migration step by step.
+HP3 is a host-only load balancing system transparent to switches. It runs entirely on application servers and is fully compatible with standard RDMA protocols and existing commercial switches. The system consists of two closely coordinated core modules: Proactive Path Perception (PPP) and Reorder Free Rerouting (RFR). The PPP module monitors link congestion in real time and finds relatively better paths through detection, while the RFR module switches traffic and ensures in-order packet delivery. The two modules work together to complete path monitoring, alternative path detection and seamless traffic migration.
 
 <MdxAccordion
   items={[
@@ -164,7 +164,7 @@ HP3 is a host-only, switch-transparent load balancing system. It runs completely
       value: "translate",
       trigger: "中文译文",
       content:
-        "HP3 是一套纯主机部署、对交换机完全透明的负载均衡系统，全程运行在业务服务器上，完全兼容标准 RDMA 协议与现有商用交换机。系统主要由两个深度协同的核心模块组成：主动路径感知模块（PPP） 和无乱序重路由模块（RFR）。两个模块分工协作，依次完成路径监控、备选路径探测与流量平滑迁移。",
+        "HP3 是一套纯主机部署、对交换机完全透明的负载均衡系统，全程运行在业务服务器上，完全兼容标准 RDMA 协议与现有商用交换机。系统主要由两个深度协同的核心模块组成：主动路径感知模块（PPP） 和无乱序重路由模块（RFR）。其中主动路径感知模块负责实时监测链路拥塞，并探测筛选出较好路径；无乱序重路由模块则执行流量切换，严格保障数据包有序传输。两个模块分工协作，依次完成路径监控、备选路径探测与流量平滑迁移。",
     },
   ]}
   client:load
@@ -184,7 +184,7 @@ First of all, let’s introduce the Proactive Path Perception module, or PPP. Th
   client:load
 />
 
-In the Incumbent Path Monitoring phase, PPP continuously monitors ECN, Explicit Congestion Notification marks carried on ACK packets returned by the receiver. We set a congestion tolerance threshold. Only when we detect that ECN marks appear continuously for multiple monitoring cycles, which means the standard RDMA congestion control mechanism DCQCN has failed to relieve persistent congestion, will we judge that the current path is severely congested. At this moment, PPP will temporarily suspend data transmission to avoid further deterioration of congestion, and immediately start the Alternative Path Discovery phase.
+In the path monitoring stage, PPP keeps analyzing acknowledgment packets from the receiver and pays close attention to CNPs (Congestion Notification Packets). We adopt a proper threshold for congestion cycles. When CNPs appear across successive monitoring cycles, it means the standard RDMA congestion control algorithm DCQCN fails to relieve persistent congestion, and the current link is heavily congested. Here is how it works. We conduct monitoring periodically. On the diagram, green and orange blocks are incoming feedback packets including ACKs and CNPs: green for ACKs, and orange for CNPs. The numbers below mark each monitoring cycle. To give an example: a CNP received in Cycle 1 sets the consecutive congestion cycle count to 1. If there is no CNP in Cycle 2, the count resets to zero. When the count finally hits 3, HP3 starts to detect alternative paths.
 
 <MdxAccordion
   items={[
@@ -192,13 +192,13 @@ In the Incumbent Path Monitoring phase, PPP continuously monitors ECN, Explicit 
       value: "translate",
       trigger: "中文译文",
       content:
-        "在当前路径监测阶段，PPP 会持续解析接收端返回的应答报文，提取其中的显式拥塞通知（ECN） 标记。我们设置了合理的拥塞容忍阈值：当检测到 ECN 标记在多个监测周期内连续出现时，就判定标准 RDMA 拥塞控制算法 DCQCN 已经无法缓解持续拥塞，当前链路陷入严重拥塞。此时 PPP 会临时暂停数据发送，避免拥塞进一步恶化，并立刻启动备选路径探测流程。",
+        "在当前路径监测阶段，PPP 会持续解析接收端返回的应答报文，重点关注CNP(拥塞通知包)的情况。我们设置了合理的拥塞周期容忍阈值：当检测到 CNP 在多个监测周期内连续出现时，就判定标准 RDMA 拥塞控制算法 DCQCN 已经无法缓解持续拥塞，当前链路陷入严重拥塞。具体的运行过程如下：我们分周期进行监测，图中橙色与绿色的方块代表我们按序到达的ACK或CNP等反馈包，其中绿色代表普通的ACK，橙色则代表HP3重点关注的CNP，下面标有数字的方块就代表周期。就像这样，HP3在周期1时收到了CNP，那么他就会更新连续拥塞周期的次数为1，而在周期2时并未收到CNP，那么连续拥塞周期的次数就更新为0，后续也是一样，当连续拥塞的周期达到3时，HP3就会进入到备选路径探测阶段。",
     },
   ]}
   client:load
 />
 
-In the Alternative Path Discovery phase, we generate a batch of lightweight probe packets. By configuring different UDP source ports for these probes, we use the native ECMP hash function of switches to distribute probe packets to different physical paths. The receiver will feed back path information through NACK packets. By analyzing the first returned NACK, we can quickly lock the path with the lowest latency and the lightest load. It is worth mentioning that HP3 makes full use of the idle time during RDMA connection establishment. When the QP, Queue Pair, completes connection handshake and enters the ready-to-send state, the upper-layer application usually performs memory registration operations. We turn this inherent latency into a probing window to complete path detection in advance, so that the official data flow can select the optimal path from the very beginning and avoid blind routing.
+During the alternative path detection phase, the system generates a set of lightweight probe packets. By assigning different UDP source ports to these probes, it leverages the native ECMP hashing mechanism of switches to distribute the packets across diverse physical paths. As illustrated in the figure, Host A is the sender and Host B acts as the receiver. The PPP module on Host A creates probe packets with distinct source port numbers. In this example, three probes numbered 1, 2 and 3 are generated and assigned unique ports, so that they can be hashed onto different paths. The Packet Sequence Number (PSN) of every probe packet is deliberately set to a value higher than the PSN currently expected by the receiver. For example, probe packet 2 here，in compliance with standard RDMA protocols, the receiver will automatically return a Negative Acknowledgment (NACK) once it detects abnormal sequence number jumps. This is the core principle that guarantees probes can stably trigger NACK responses. Meanwhile, the receiver transmits the corresponding source port information of each probe within the NACK packets. By parsing the first arriving NACK, we can quickly identify the path with the lowest latency and lightest load. Furthermore, HP3 makes full use of the idle period during RDMA connection establishment. After the RDMA Queue Pair (QP) completes handshaking and enters the ready-to-send state, upper-layer applications usually perform memory registration. We convert this inherent waiting delay into a detection window to finish path probing in advance. In this way, official data flows can select the preferable path from the very beginning, completely avoiding blind route selection at the initial stage of transmission.
 
 <MdxAccordion
   items={[
@@ -206,7 +206,7 @@ In the Alternative Path Discovery phase, we generate a batch of lightweight prob
       value: "translate",
       trigger: "中文译文",
       content:
-        "在备选路径探测阶段，系统生成一批轻量级探测报文。通过为探测报文配置不同的 UDP 源端口，借助交换机原生的 ECMP 哈希机制，将探测报文分发到不同的物理路径。接收端会通过否定应答报文（NACK）回传路径状态信息。我们解析最先到达的 NACK 报文，就能快速锁定时延最低、负载最轻的最优路径。值得一提的是，HP3 充分利用了 RDMA 连接建立的空闲间隙：当 RDMA 队列对（QP）完成握手、进入可发送状态后，上层应用通常会执行内存注册操作。我们将这段固有的等待时延转化为探测窗口，提前完成路径检测，让正式数据流从一开始就选择最优路径，彻底避免传输初期的盲目选路。",
+        "在备选路径探测阶段，系统生成一批轻量级探测报文。通过为探测报文配置不同的 UDP 源端口，借助交换机原生的 ECMP 哈希机制，将探测报文分发到不同的物理路径。以这个图为例，其中A代表发送端主机，B代表接收端主机，此时A的PPP模块就会挑选不同的源端口号构造探测包，在这个例子中我们构造了3个探测包1,2,3并为他们分配了不同的端口号以使他们能够被哈希到不同的路径。所有探测报文的数据包序列号（PSN）都会被刻意设置为大于接收端当前预期接收的序列号。例如这里的探测包2，按照标准 RDMA 协议，接收端检测到序列号跳变、出现异常时，会自动返回否定应答报文（NACK），这也是探测包能够稳定触发 NACK 的核心原因。同时接收端会在 NACK 报文中回传探测包对应的源端口信息。我们解析最先到达的 NACK 报文，就能快速锁定时延最低、负载最轻的最优路径。值得一提的是，HP3 充分利用了 RDMA 连接建立的空闲间隙：当 RDMA 队列对（QP）完成握手、进入可发送状态后，上层应用通常会执行内存注册操作。我们将这段固有的等待时延转化为探测窗口，提前完成路径检测，让正式数据流从一开始就选择最优路径，彻底避免传输初期的盲目选路。",
     },
   ]}
   client:load
@@ -296,7 +296,7 @@ In large-scale simulation experiments of general data center workloads, HP3 achi
   client:load
 />
 
-For our future research plans, we have two main directions. First, we plan to offload the core logic of PPP and RFR modules to DPU, Data Processing Unit, to further reduce the CPU overhead of host servers. Second, we will design adaptive parameter tuning algorithms to make HP3 automatically adjust congestion thresholds and probing strategies according to dynamic network changes, so as to adapt to more complex and diverse large-scale cluster environments.
+{/* For our future research plans, we have two main directions. First, we plan to offload the core logic of PPP and RFR modules to DPU, Data Processing Unit, to further reduce the CPU overhead of host servers. Second, we will design adaptive parameter tuning algorithms to make HP3 automatically adjust congestion thresholds and probing strategies according to dynamic network changes, so as to adapt to more complex and diverse large-scale cluster environments.
 
 <MdxAccordion
   items={[
@@ -308,7 +308,7 @@ For our future research plans, we have two main directions. First, we plan to of
     },
   ]}
   client:load
-/>
+/> */}
 
 Finally, on behalf of our whole team, I would like to thank all the teachers and experts for your listening. We also welcome everyone to put forward valuable comments and questions. Thank you very much!
 
