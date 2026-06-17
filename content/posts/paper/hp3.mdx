@@ -45,7 +45,7 @@ Good morning! It's my great honor to stand here today and share our recent resea
   client:load
 />
 
-Nowadays, cloud computing, large-scale artificial intelligence training, distributed storage and real-time big data services have become the mainstream workloads of modern data centers. All these applications put forward extremely demanding requirements for network performance: ultra-low latency, high throughput and low CPU consumption. Under such trends, Remote Direct Memory Access, namely RDMA, has gradually become a foundational network technology for high-performance data centers. Different from traditional TCP/IP networks, RDMA adopts kernel bypass and zero-copy data transmission. It directly completes data interaction between the memory of two end hosts without the participation of the operating system kernel. This mechanism enables RDMA to achieve microsecond-level end-to-end latency, line-rate bandwidth utilization and negligible CPU overhead on servers. Therefore, RDMA has been widely deployed in the infrastructure of major cloud vendors and AI computing clusters, supporting core businesses such as large language model training, distributed file systems and in-memory databases.
+{/* Nowadays, cloud computing, large-scale artificial intelligence training, distributed storage and real-time big data services have become the mainstream workloads of modern data centers. All these applications put forward extremely demanding requirements for network performance: ultra-low latency, high throughput and low CPU consumption. Under such trends, Remote Direct Memory Access, namely RDMA, has gradually become a foundational network technology for high-performance data centers. Different from traditional TCP/IP networks, RDMA adopts kernel bypass and zero-copy data transmission. It directly completes data interaction between the memory of two end hosts without the participation of the operating system kernel. This mechanism enables RDMA to achieve microsecond-level end-to-end latency, line-rate bandwidth utilization and negligible CPU overhead on servers. Therefore, RDMA has been widely deployed in the infrastructure of major cloud vendors and AI computing clusters, supporting core businesses such as large language model training, distributed file systems and in-memory databases.
 
 <MdxAccordion
   items={[
@@ -68,6 +68,20 @@ However, despite its outstanding performance advantages, RDMA still cannot fully
       trigger: "中文译文",
       content:
         "但即便拥有如此出色的性能，RDMA 在现代大型数据中心中依旧难以发挥全部潜力。当下绝大多数数据中心都采用经典的 Clos 多级架构，这是一种天然具备多路径特性的网络，设计初衷就是提供大量冗余链路、丰富路径选择，以此提升全网整体转发能力。然而在 RDMA 实际落地过程中，多路径的优势被传统流量负载均衡机制严重制约，负载均衡问题也成为了限制 RDMA 性能释放的核心瓶颈。",
+    },
+  ]}
+  client:load
+/> */}
+
+Nowadays, with excellent performance featuring low latency, high bandwidth and low CPU overhead brought by kernel bypass and zero-copy transmission, RDMA has been widely deployed in data centers adopting the mainstream Clos architecture to support high-performance services such as cloud computing and large model training. Nevertheless, traditional load balancing mechanisms severely limit the multi-path advantages of the Clos topology, preventing RDMA from fully unleashing its performance potential in large-scale data centers, and the core bottleneck lies in load balancing.
+
+<MdxAccordion
+  items={[
+    {
+      value: "translate",
+      trigger: "中文译文",
+      content:
+        "如今，RDMA 凭借内核旁路与零拷贝传输具备低时延、高带宽、低 CPU 开销的优异性能，已广泛应用于主流 Clos 架构数据中心支撑云计算、大模型训练等高性能业务，但传统负载均衡机制严重制约了 Clos 拓扑多路径优势发挥，导致 RDMA 无法在大规模数据中心充分释放性能潜力，其核心瓶颈在于负载均衡。",
     },
   ]}
   client:load
