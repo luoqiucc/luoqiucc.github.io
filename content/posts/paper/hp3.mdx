@@ -87,7 +87,7 @@ Nowadays, with excellent performance featuring low latency, high bandwidth and l
   client:load
 />
 
-We conducted a series of simulation and practical experiments to reveal the defects of existing RDMA load balancing schemes, as illustrated in the following figures. Figure 2 compares the link throughput imbalance of different methods under various workloads, and Figure 3 presents their normalized goodput. We can see that ECMP and LetFlow adopt static routing or flowlet-based scheduling, resulting in extremely high throughput imbalance. The link load is highly uneven, most multipath resources are left idle, and the overall bandwidth utilization is poor. In contrast, fine-grained per-packet scheduling schemes like RPS and AR can distribute traffic evenly across links and achieve perfect load balancing. However, frequent path switching leads to severe packet reordering. RDMA regards out-of-order packets as packet loss and triggers a large number of spurious retransmissions, which drastically reduces the actual goodput. In conclusion, traditional RDMA load balancing schemes have obvious limitations and fail to achieve a good balance among load distribution, in-order packet delivery and overall network performance.
+We conducted a series of simulation experiments to reveal the defects of existing RDMA load balancing schemes, as illustrated in the following figures. Figure 2 compares the link throughput imbalance of different methods under various workloads, and Figure 3 presents their normalized goodput. We can see that ECMP and LetFlow adopt static routing or flowlet-based scheduling, resulting in extremely high throughput imbalance. The link load is highly uneven, most multipath resources are left idle, and the overall bandwidth utilization is poor. In contrast, fine-grained per-packet scheduling schemes like RPS and AR can distribute traffic evenly across links and achieve perfect load balancing. However, frequent path switching leads to severe packet reordering. RDMA regards out-of-order packets as packet loss and triggers a large number of spurious retransmissions, which drastically reduces the actual goodput. In conclusion, traditional RDMA load balancing schemes have obvious limitations and fail to achieve a good balance among load distribution, in-order packet delivery and overall network performance.
 
 <MdxAccordion
   items={[
@@ -95,7 +95,7 @@ We conducted a series of simulation and practical experiments to reveal the defe
       value: "translate",
       trigger: "中文译文",
       content:
-        "我们搭建了多组仿真与测试实验，以此直观展现现有 RDMA 负载均衡方案存在的缺陷，大家可以结合这两张图表进行查看。图 2 统计了各类方案在不同业务场景下的链路吞吐量不均衡度，图 3 则展示了对应的归一化有效吞吐量表现。从数据中不难发现，ECMP 和 LetFlow 采用静态路由或依赖流间隙做调度，吞吐量不均衡度始终处于高位，网络链路负载差异极大，大量冗余的多路径资源被闲置，整体带宽利用率偏低。反观 RPS、AR 这类细粒度逐包调度方案，虽然能够把流量均匀分发到所有链路上，实现了负载均衡，但频繁的路径切换会造成严重的数据包乱序。RDMA 机制会将报文乱序误判为数据丢包，进而触发大规模无效重传，最终导致系统实际有效吞吐量大幅下滑。综合两组实验结果能够得出结论：传统 RDMA 负载均衡方案都存在明显短板，始终难以在负载均衡、报文保序传输与整体网络性能三者之间做到有效兼顾。",
+        "我们搭建了多组仿真实验，以此直观展现现有 RDMA 负载均衡方案存在的缺陷，大家可以结合这两张图表进行查看。图 2 统计了各类方案在不同业务场景下的链路吞吐量不均衡度，图 3 则展示了对应的归一化有效吞吐量表现。从数据中不难发现，ECMP 和 LetFlow 采用静态路由或依赖流间隙做调度，吞吐量不均衡度始终处于高位，网络链路负载差异极大，大量冗余的多路径资源被闲置，整体带宽利用率偏低。反观 RPS、AR 这类细粒度逐包调度方案，虽然能够把流量均匀分发到所有链路上，实现了负载均衡，但频繁的路径切换会造成严重的数据包乱序。RDMA 机制会将报文乱序误判为数据丢包，进而触发大规模无效重传，最终导致系统实际有效吞吐量大幅下滑。综合两组实验结果能够得出结论：传统 RDMA 负载均衡方案都存在明显短板，始终难以在负载均衡、报文保序传输与整体网络性能三者之间做到有效兼顾。",
     },
   ]}
   client:load
