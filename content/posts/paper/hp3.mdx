@@ -45,34 +45,6 @@ Good morning! It's my great honor to stand here today and share our recent resea
   client:load
 />
 
-{/* Nowadays, cloud computing, large-scale artificial intelligence training, distributed storage and real-time big data services have become the mainstream workloads of modern data centers. All these applications put forward extremely demanding requirements for network performance: ultra-low latency, high throughput and low CPU consumption. Under such trends, Remote Direct Memory Access, namely RDMA, has gradually become a foundational network technology for high-performance data centers. Different from traditional TCP/IP networks, RDMA adopts kernel bypass and zero-copy data transmission. It directly completes data interaction between the memory of two end hosts without the participation of the operating system kernel. This mechanism enables RDMA to achieve microsecond-level end-to-end latency, line-rate bandwidth utilization and negligible CPU overhead on servers. Therefore, RDMA has been widely deployed in the infrastructure of major cloud vendors and AI computing clusters, supporting core businesses such as large language model training, distributed file systems and in-memory databases.
-
-<MdxAccordion
-  items={[
-    {
-      value: "translate",
-      trigger: "中文译文",
-      content:
-        "如今，云计算、大规模人工智能训练、分布式存储与实时大数据业务，已经成为现代数据中心的主流负载。这类应用对网络提出了极高的要求：超低时延、高吞吐、服务器低算力消耗。在此背景下，远程直接内存访问（RDMA） 逐步成为高性能数据中心的核心基础网络技术。和传统 TCP/IP 网络不同，RDMA 采用内核旁路与零拷贝传输机制，数据可以直接在两台终端主机的内存之间交互，全程无需操作系统内核介入。这一特性让 RDMA 实现了微秒级端到端时延、线速带宽利用，同时服务器 CPU 开销几乎可以忽略不计。目前，国内外各大云厂商、AI 算力集群都已大规模部署 RDMA，支撑大语言模型训练、分布式文件系统、内存数据库等核心业务。",
-    },
-  ]}
-  client:load
-/>
-
-However, despite its outstanding performance advantages, RDMA still cannot fully release its potential in today’s large-scale data centers. Most modern data centers adopt the classic Clos topology, which is a multi-path network architecture designed to provide abundant redundant links and strong path diversity. The original intention of this design is to fully utilize all network links and improve the overall network capacity. But in actual RDMA deployment, this multi-path advantage is severely restricted by traditional traffic load balancing mechanisms, and the core bottleneck lies in load balancing.
-
-<MdxAccordion
-  items={[
-    {
-      value: "translate",
-      trigger: "中文译文",
-      content:
-        "但即便拥有如此出色的性能，RDMA 在现代大型数据中心中依旧难以发挥全部潜力。当下绝大多数数据中心都采用经典的 Clos 多级架构，这是一种天然具备多路径特性的网络，设计初衷就是提供大量冗余链路、丰富路径选择，以此提升全网整体转发能力。然而在 RDMA 实际落地过程中，多路径的优势被传统流量负载均衡机制严重制约，负载均衡问题也成为了限制 RDMA 性能释放的核心瓶颈。",
-    },
-  ]}
-  client:load
-/> */}
-
 Nowadays, with excellent performance featuring low latency, high bandwidth and low CPU overhead brought by kernel bypass and zero-copy transmission, RDMA has been widely deployed in data centers adopting the mainstream Clos architecture to support high-performance services such as cloud computing and large model training. Nevertheless, traditional load balancing mechanisms severely limit the multi-path advantages of the Clos topology, preventing RDMA from fully unleashing its performance potential in large-scale data centers, and the core bottleneck lies in load balancing.
 
 <MdxAccordion
@@ -100,48 +72,6 @@ We conducted a series of simulation experiments to reveal the defects of existin
   ]}
   client:load
 />
-
-{/* To solve the above pain points, academia and the industry have proposed a variety of RDMA-oriented load balancing solutions in recent years. After sorting out and analyzing existing state-of-the-art schemes, we find that they all fall into a typical dilemma: performance and practicality cannot be achieved at the same time.
-
-<MdxAccordion
-  items={[
-    {
-      value: "translate",
-      trigger: "中文译文",
-      content:
-        "为了解决上述难题，近年来学术界和产业界陆续提出了大量面向 RDMA 的负载均衡优化方案。我们对现有主流前沿方案进行梳理分析后发现，它们普遍陷入一个两难困境：高性能与实用性无法兼顾。",
-    },
-  ]}
-  client:load
-/>
-
-On the one hand, many high-performance RDMA load balancers such as DCP, ConWeave, MORS and MP-RDMA can effectively improve path utilization and relieve congestion. But they all have high deployment barriers. Some require upgrading programmable switches and adding complex in-network logic; some need to redesign the internal stack of RNIC, the RDMA network interface card, which involves hardware revision and long-term compatibility adaptation; others depend on real-time network telemetry systems, which greatly increases operation and maintenance complexity. All these factors make these solutions difficult to be popularized in commercial mass-produced data centers.
-
-<MdxAccordion
-  items={[
-    {
-      value: "translate",
-      trigger: "中文译文",
-      content:
-        "一方面，DCP、ConWeave、MORS、MP-RDMA 等高性能 RDMA 负载均衡方案，虽然可以有效提升路径利用率、缓解网络拥塞，但部署门槛极高。部分方案需要升级可编程交换机、部署复杂的网络内部逻辑；部分方案需要重新设计 RDMA 网卡（RNIC）的内部协议栈，涉及硬件改版与长期的兼容性适配；还有方案依赖全网实时遥测系统，极大提升了运维难度。种种限制，让这类技术很难在商用量产数据中心中大规模推广。",
-    },
-  ]}
-  client:load
-/>
-
-On the other hand, some lightweight fine-grained load balancing schemes like RPS, AR and DRILL split traffic at the per-packet level. They can well disperse load and balance link throughput, but they bring another critical problem: severe packet reordering. The transmission semantics of RDMA strictly require in-order packet delivery. When out-of-order packets appear, RNIC will misjudge them as packet loss and initiate a large number of unnecessary retransmissions. A large number of spurious retransmissions will occupy valid bandwidth, form NACK storms, and eventually cause the overall throughput to collapse. Besides, flowlet-based schemes such as LetFlow and CONGA are also not applicable to RDMA. Because RNIC will actively pace the sending of packets, there is almost no interval between consecutive packets. As a result, there is no available time window for flowlet splitting and path switching.
-
-<MdxAccordion
-  items={[
-    {
-      value: "translate",
-      trigger: "中文译文",
-      content:
-        "另一方面，RPS、AR、DRILL 等轻量级细粒度负载均衡方案，采用逐包分流的思路，能够很好地分散流量、均衡链路负载，却带来了新的致命问题 ——严重的报文乱序。RDMA 的传输语义严格要求报文按序到达，一旦出现乱序报文，RDMA 网卡会将其误判为报文丢失，进而触发大量无效重传。海量的无效重传会挤占有效带宽，形成否定应答风暴，最终导致全网吞吐断崖式下跌。除此之外，以 LetFlow、CONGA 为代表的流片类方案也无法适配 RDMA 场景：RDMA 网卡会主动对报文进行调速，连续报文之间几乎不存在时间间隔，流片拆分与路径切换完全没有可行的时间窗口。",
-    },
-  ]}
-  client:load
-/> */}
 
 Faced with this series of contradictions and limitations, we put forward the core research question of this work: Is it possible to design a RDMA load balancer that needs no modification to commercial switches, runs purely on end hosts with only moderate extra overhead, and simultaneously realizes high path utilization, strict packet order preservation and easy deployment? After repeated research, design and verification, our answer is yes, and that is the HP3 system we proposed.
 
@@ -268,7 +198,7 @@ If the probing result shows that all alternative paths are also congested, or th
   client:load
 />
 
-After finishing the design, we implemented a complete HP3 prototype based on DPDK and commercial off-the-shelf RNICs. We built a dual-layer Leaf-Spine Clos network test platform with P4 programmable switches, and also conducted large-scale simulation experiments based on NS-3. We selected multiple typical workloads to evaluate the performance, including general data center workloads such as AliCloud Storage, Meta Hadoop, Data Mining and Web Search, as well as classic AI collective communication workloads: AllReduce and AllToAll. We compared HP3 with mainstream schemes including ECMP, LetFlow, RPS, AR and state-of-the-art ConWeave.
+After finishing the design, we implemented a complete HP3 prototype based on DPDK, and also conducted large-scale simulation experiments based on NS-3.
 
 <MdxAccordion
   items={[
@@ -276,7 +206,7 @@ After finishing the design, we implemented a complete HP3 prototype based on DPD
       value: "translate",
       trigger: "中文译文",
       content:
-        "完成整体设计后，我们基于数据平面开发套件（DPDK）和商用 RDMA 网卡搭建了 HP3 原型系统。实验平台分为两部分：一是基于 P4 可编程交换机搭建的双层叶脊（Leaf-Spine）Clos 网络硬件测试床；二是基于 NS-3 搭建的大规模仿真环境。我们选取了多类典型数据中心负载开展评测，包括阿里云存储、Meta Hadoop、数据挖掘、网页检索等通用业务负载，以及 AllReduce、AllToAll 两类 AI 集群经典集合通信负载。对照组选用 ECMP、LetFlow、RPS、AR 以及前沿方案 ConWeave 等主流负载均衡算法。",
+        "完成整体设计后，我们基于数据平面开发套件（DPDK） HP3 原型系统，也是基于 NS-3 搭建的大规模仿真环境。",
     },
   ]}
   client:load
@@ -309,20 +239,6 @@ In large-scale simulation experiments of general data center workloads, HP3 achi
   ]}
   client:load
 />
-
-{/* For our future research plans, we have two main directions. First, we plan to offload the core logic of PPP and RFR modules to DPU, Data Processing Unit, to further reduce the CPU overhead of host servers. Second, we will design adaptive parameter tuning algorithms to make HP3 automatically adjust congestion thresholds and probing strategies according to dynamic network changes, so as to adapt to more complex and diverse large-scale cluster environments.
-
-<MdxAccordion
-  items={[
-    {
-      value: "translate",
-      trigger: "中文译文",
-      content:
-        "对于后续研究，我们规划了两个主要方向：第一，将 PPP 与 RFR 的核心逻辑下沉至数据处理单元（DPU）进行硬件卸载，进一步削减服务器主机的 CPU 开销；第二，设计自适应参数调优算法，让 HP3 能够根据网络动态变化，自动调整拥塞阈值、探测策略，适配规模更大、场景更复杂的集群环境。",
-    },
-  ]}
-  client:load
-/> */}
 
 Finally, on behalf of our whole team, I would like to thank all the teachers and experts for your listening. We also welcome everyone to put forward valuable comments and questions. Thank you very much!
 

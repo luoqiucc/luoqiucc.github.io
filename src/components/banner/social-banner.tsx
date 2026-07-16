@@ -2,6 +2,7 @@ import Bilibili from "@/assets/social/bilibili.svg"
 import Github from "@/assets/social/github.svg"
 import Steam from "@/assets/social/steam.svg"
 import Facebook from "@/assets/social/facebook.svg"
+import Douyin from "@/assets/social/douyin.svg"
 
 function SocialBanner() {
   return (
@@ -20,6 +21,9 @@ function SocialBanner() {
         href="https://space.bilibili.com/94905532?spm_id_from=333.1007.0.0"
       >
         <img className="mx-2 h-8 w-8" src={Bilibili.src} alt="Bilibili" />
+      </a>
+      <a target="_blank" href="https://v.douyin.com/txMBdZXOn90/">
+        <img className="mx-2 h-8 w-8" src={Douyin.src} alt="Douyin" />
       </a>
       <a target="_blank" href="https://steamcommunity.com/id/2992845224/">
         <img className="mx-2 h-8 w-8" src={Steam.src} alt="Steam" />
