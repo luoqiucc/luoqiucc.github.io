@@ -1,0 +1,151 @@
+---
+title: "Linux服务(Services)实践"
+subtitle: "systemd服务管理方法"
+abstract: "本文记录了我在使用Linux服务(Services)的一些心得"
+category: "essay"
+pubDate: 2026-08-01
+---
+
+## 前期准备
+
+如果没有Systemd，请先安装：
+
+```shell
+# 使用 yum 安装 systemd（CentOS/RHEL）
+yum install systemd
+
+# 使用 apt 安装 systemd（Debian/Ubuntu）
+apt install systemd
+```
+
+## 一个经典的例子
+
+```shell
+[Unit]
+Description = server description
+After = network.target syslog.target
+Wants = network.target
+
+[Service]
+Type = simple
+ExecStart = /path/to/user-script -c /path/to/config
+Restart = on-failure
+RestartSec = 30
+StartLimitIntervalSec = 0
+
+[Install]
+WantedBy = multi-user.target
+```
+
+下面，我会逐行解释这些语句的意义及用法。
+
+#### Description
+
+```shell
+Description = server description
+
+# 服务描述，后续可以通过执行 systemctl list-units 时看到该备注，方便区分。
+```
+
+#### After
+
+```shell
+After = network.target syslog.target
+
+# 在哪些服务启动完成之后，再启动当前服务，在这个例子中：
+#   network.target：系统网络服务就绪（网卡、IP、网络栈初始化完毕）
+#   syslog.target：系统日志服务启动完成
+#   含义：必须等网络、日志服务就绪，才启动服务，避免网络没就绪启动失败。
+```
+
+#### Wants
+
+```shell
+Wants = network.target
+
+# 依赖目标，软依赖。在这个例子中，系统启动时顺带拉起 network.target 网络服务。
+# 和 After 区别：
+#   After 只控制启动先后顺序，不会主动拉起依赖服务。
+#   Wants 会主动把依赖服务一并启动。
+#   结合上面 After，保证系统开机一定会启动网络，并且网络就绪后再启动服务。
+```
+
+#### Type
+
+```shell
+Type = simple
+
+# simple 为默认类型，ExecStart 执行的命令创建主进程，systemd 认为该进程就是服务主进程。
+```
+
+#### ExecStart
+
+```shell
+ExecStart = /path/to/user-script -c /path/to/config
+
+# 要启动服务的完整启动命令
+```
+
+#### Restart
+
+```shell
+Restart = on-failure
+
+# 自动重启策略，在这个例子中异常崩溃才重启，正常手动 stop 不重启
+```
+
+其中，自动重启策略有以下几种：
+
+| 参数        | 效果                                 |
+| ----------- | ------------------------------------ |
+| no          | 崩溃后不会重启（默认）               |
+| on-failure  | 异常崩溃才重启，正常手动 stop 不重启 |
+| always      | 无论正常退出还是崩溃，一律重启       |
+| on-abnormal | 被信号杀死、超时才重启               |
+
+#### RestartSec
+
+```shell
+RestartSec = 30
+
+# 重启的等待时间，单位是秒。防止程序故障无限疯狂重启占用 CPU。在这个例子中我设置了每30秒尝试一次重启。
+```
+
+#### StartLimitIntervalSec
+
+```shell
+StartLimitIntervalSec = 0
+
+# 启动限流周期。systemd 默认有限流机制，短时间内多次启动失败，会判定服务故障不再重试。
+# StartLimitIntervalSec=0 代表关闭启动次数限制，只要满足重启条件就可以无限重试重启。
+```
+
+#### WantedBy
+
+```shell
+WantedBy = multi-user.target
+
+# 控制执行 systemctl enable [server] 时，该服务挂载到哪个启动模式。在这个例子中：
+#   multi-user.target：Linux 多用户字符模式（绝大多数服务器默认运行级别，无图形界面）。
+#   如果是桌面系统带图形界面，可写 graphical.target。
+```
+
+## 一些常用控制命令
+
+```shell
+# 重载systemd配置
+systemctl daemon-reload
+
+# 启动服务
+systemctl start [server]
+
+# 设置开机自启
+systemctl enable [server]
+
+# 查看状态日志
+systemctl status [server]
+```
+
+## 参考
+
+- [_Ubuntu Manpages 文档_](https://manpages.ubuntu.com/manpages/focal/man1/systemd.1.html)
