@@ -1,0 +1,45 @@
+---
+title: "Python虚拟环境的使用"
+subtitle: "python3"
+abstract: "本文记录了Python虚拟环境的一些使用心得及技巧"
+category: "essay"
+pubDate: 2026-08-08
+---
+
+## 基本使用
+
+创建虚拟环境，这里以创建 **pyvenv** 为例
+
+```shell
+python3 -m venv pyvenv
+```
+
+使用下面的命令激活虚拟环境
+
+```shell
+source pyvenv/bin/activate
+```
+
+## 一些绝活
+
+#### 1. 对于一些项目，他可能需要同时用到python2和python3，此时我们就可以设置虚拟环境中的python命令指向python2，python3命令保持不变，下面是设置方法：
+
+进入虚拟环境文件夹的 **bin** 目录
+
+```shell
+cd pyvenv/bin
+```
+
+备份原本的python软链接（一个好习惯）
+
+```shell
+mv python python.bak
+```
+
+将环境内的python链接到系统的python2.7（我这里的版本是2.7，以自己系统上的版本为准）
+
+```shell
+ln -s /usr/bin/python2.7 python
+```
+
+_在最新的Ubuntu24系统中，python2已经被删除，使用源码编译安装的python2其可执行文件可能在 **/usr/local/bin** 文件夹中_
