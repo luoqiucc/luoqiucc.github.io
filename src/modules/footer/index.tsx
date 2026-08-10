@@ -7,16 +7,15 @@ import {
 } from "@/components/ui/empty"
 
 function Footer() {
+  const year = new Date().getFullYear()
+
   return (
-    <div className="mt-16">
-      <Empty className="h-64">
+    <div className="mt-16 bg-accent">
+      <Empty className="h-48">
         <EmptyHeader>
-          <EmptyTitle>落秋cc</EmptyTitle>
-          <EmptyDescription>钱塘江上潮信来，今日方知我是我。</EmptyDescription>
+          <EmptyTitle>😋🤣⚡😍😭😅💥😇❓</EmptyTitle>
+          <EmptyDescription>&copy; {year} 落秋cc</EmptyDescription>
         </EmptyHeader>
-        <EmptyContent>
-          <div className="grid grid-cols-4 gap-2"></div>
-        </EmptyContent>
       </Empty>
     </div>
   )

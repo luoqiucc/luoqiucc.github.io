@@ -4,9 +4,9 @@ import Steam from "@/assets/social/steam.svg"
 import Facebook from "@/assets/social/facebook.svg"
 import Douyin from "@/assets/social/douyin.svg"
 
-function SocialBanner() {
+function Social() {
   return (
-    <div className="flex h-16 items-center justify-center bg-blue-600">
+    <div className="flex h-14 items-center justify-center bg-blue-600">
       <a target="_blank" href="https://github.com/luoqiucc">
         <img className="mx-2 h-8 w-8" src={Github.src} alt="Github" />
       </a>
@@ -32,4 +32,4 @@ function SocialBanner() {
   )
 }
 
-export { SocialBanner }
+export { Social }
