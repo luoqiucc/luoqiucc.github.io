@@ -37,7 +37,7 @@ function NavDrawer() {
           <div className="text-center">
             <DrawerTitle className="my-2">落秋cc</DrawerTitle>
             <DrawerDescription>
-              硕士在读，计算机网络方向，主要从事高性能网络相关研究，熟悉 P4
+              计算机网络方向，主要从事高性能网络相关研究，熟悉 P4
               可编程数据平面、DPDK高速数据包处理，聚焦网络传输协议与性能优化相关工作。
             </DrawerDescription>
           </div>
