@@ -29,7 +29,7 @@ function MomentCard({ moment }: Props) {
         <p>{moment.body}</p>
         {moment.data.topic.length != 0 && <Separator className="my-4" />}
         {moment.data.topic.map((topic) => (
-          <Badge key={topic} className="text-blue-600" variant="ghost">
+          <Badge key={topic} className="px-2 text-blue-600" variant="ghost">
             #{topic}
           </Badge>
         ))}

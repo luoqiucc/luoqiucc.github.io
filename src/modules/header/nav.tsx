@@ -1,4 +1,10 @@
 import {
+  CircleAlertIcon,
+  CircleCheckIcon,
+  CircleDashedIcon,
+} from "lucide-react"
+
+import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -8,14 +14,15 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 
-function IndexNavigationMenu() {
+function Nav() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <a href="/">首页</a>
-          </NavigationMenuLink>
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle()}
+            render={<a href="/">首页</a>}
+          />
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuTrigger>博客</NavigationMenuTrigger>
@@ -33,11 +40,6 @@ function IndexNavigationMenu() {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <a href="/post/collection/1">藏品</a>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   )
@@ -51,16 +53,20 @@ function ListItem({
 }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
   return (
     <li {...props}>
-      <NavigationMenuLink asChild>
-        <a href={href}>
-          <div className="flex flex-col gap-1 text-sm">
-            <div className="leading-none font-medium">{title}</div>
-            <div className="line-clamp-2 text-muted-foreground">{children}</div>
-          </div>
-        </a>
-      </NavigationMenuLink>
+      <NavigationMenuLink
+        render={
+          <a href={href}>
+            <div className="flex flex-col gap-1 text-sm">
+              <div className="leading-none font-medium">{title}</div>
+              <div className="line-clamp-2 text-muted-foreground">
+                {children}
+              </div>
+            </div>
+          </a>
+        }
+      />
     </li>
   )
 }
 
-export { IndexNavigationMenu }
+export { Nav }

@@ -1,32 +1,9 @@
 ---
 import { getCollection, render } from "astro:content"
 import { formatCategory, formatDateCN } from "@/lib/utils"
+import PostLayout from "@/layouts/post.astro"
 import { Badge } from "@/components/ui/badge"
-import IndexLayout from "@/layouts/index.astro"
-import H2 from "@/components/mdx/h2.astro"
-import H3 from "@/components/mdx/h3.astro"
-import H4 from "@/components/mdx/h4.astro"
-import Blockquote from "@/components/mdx/blockquote.astro"
-import P from "@/components/mdx/p.astro"
-import List from "@/components/mdx/list.astro"
-import Table from "@/components/mdx/table/table.astro"
-import Th from "@/components/mdx/table/th.astro"
-import Tr from "@/components/mdx/table/tr.astro"
-import Td from "@/components/mdx/table/td.astro"
-import { CoverImage } from "@/components/cover-card"
-
-const components = {
-  h2: H2,
-  h3: H3,
-  h4: H4,
-  blockquote: Blockquote,
-  p: P,
-  ul: List,
-  table: Table,
-  th: Th,
-  tr: Tr,
-  td: Td,
-}
+import { CoverImage } from "@/components/CoverCard"
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts")
@@ -40,7 +17,7 @@ const { post } = Astro.props
 const { Content } = await render(post)
 ---
 
-<IndexLayout>
+<PostLayout title={post.data.title}>
   <div class="my-16">
     <div class="my-8 flex justify-center">
       <a href={`/post/${post.data.category}/1`}>
@@ -65,5 +42,7 @@ const { Content } = await render(post)
   <blockquote class="my-16 border-l-2 pl-6 italic">
     &quot;{post.data.abstract}&quot;
   </blockquote>
-  <Content components={components} />
-</IndexLayout>
+  <div class="typeset typeset-doc">
+    <Content />
+  </div>
+</PostLayout>

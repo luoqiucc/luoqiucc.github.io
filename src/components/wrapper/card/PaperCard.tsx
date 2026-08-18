@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { formatCategory, formatDateCN } from "@/lib/utils"
-import { Badge } from "./ui/badge"
+import { Badge } from "@/components/ui/badge"
 
 interface Props {
   post: CollectionEntry<"posts">
@@ -33,8 +33,8 @@ function PaperCard({ post }: Props) {
         <CardContent className="overflow-y-auto">
           <p>{post.data.abstract}</p>
         </CardContent>
-        <CardFooter className="bg-primary">
-          <p className="text-secondary">{post.data.subtitle}</p>
+        <CardFooter>
+          <p className="italic">{post.data.subtitle}</p>
         </CardFooter>
       </Card>
     </a>

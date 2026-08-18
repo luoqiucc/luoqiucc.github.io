@@ -14,16 +14,10 @@ interface Props {
   post: CollectionEntry<"posts">
 }
 
-function CollectionCard({ post }: Props) {
+function PostCard({ post }: Props) {
   return (
     <a href={`/post/${post.id}`}>
-      <Card className="relative pt-0">
-        <div className="absolute inset-0 z-30 aspect-video" />
-        <img
-          src={post.data.cover}
-          alt="cover"
-          className="relative z-20 aspect-video w-full bg-accent object-cover dark:brightness-80"
-        />
+      <Card className="max-h-72">
         <CardHeader>
           <CardDescription className="mb-2">
             {formatDateCN(post.data.pubDate)}
@@ -31,9 +25,7 @@ function CollectionCard({ post }: Props) {
           <CardTitle>{post.data.title}</CardTitle>
           <CardDescription>{post.data.subtitle}</CardDescription>
           <CardAction>
-            <Badge variant="default">
-              {formatCategory(post.data.category)}
-            </Badge>
+            <Badge>{formatCategory(post.data.category)}</Badge>
           </CardAction>
         </CardHeader>
         <CardContent className="overflow-y-auto">
@@ -44,4 +36,4 @@ function CollectionCard({ post }: Props) {
   )
 }
 
-export { CollectionCard }
+export { PostCard }

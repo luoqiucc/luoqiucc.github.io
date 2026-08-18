@@ -1,9 +1,9 @@
 ---
 import type { GetStaticPathsOptions } from "astro"
 import { getCollection } from "astro:content"
-import { PaperCard } from "@/components/paper-card"
 import IndexLayout from "@/layouts/index.astro"
-import { PostPagination } from "@/components/pagination"
+import { PostPagination } from "@/components/PostPagination"
+import { PostCardWrapper } from "@/components/wrapper/PostCardWrapper"
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const papers = (
@@ -18,14 +18,14 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 const { page } = Astro.props
 ---
 
-<IndexLayout>
+<IndexLayout title="论文研读">
   <h1
     class="mt-12 mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight text-balance"
   >
     论文研读
   </h1>
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-    {page.data.map((post) => <PaperCard post={post} />)}
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <PostCardWrapper posts={page.data} />
   </div>
   <div class="my-8">
     <PostPagination page={page} category="post/paper" />

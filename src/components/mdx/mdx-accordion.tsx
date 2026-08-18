@@ -15,13 +15,9 @@ interface Props {
 
 function MdxAccordion({ items }: Props) {
   return (
-    <Accordion type="single" collapsible className="mt-4 rounded-lg border">
+    <Accordion>
       {items.map((item) => (
-        <AccordionItem
-          key={item.value}
-          value={item.value}
-          className="border-b px-4 last:border-b-0"
-        >
+        <AccordionItem value={item.value}>
           <AccordionTrigger>{item.trigger}</AccordionTrigger>
           <AccordionContent>{item.content}</AccordionContent>
         </AccordionItem>

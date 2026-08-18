@@ -3,8 +3,8 @@ import { getCollection } from "astro:content"
 import { ArrowRight } from "lucide-react"
 import IndexLayout from "@/layouts/index.astro"
 import { Button } from "@/components/ui/button"
-import { PostCardWrapper } from "@/modules/wrapper/post-card-wrapper"
-import { MomentCardWrapper } from "@/modules/wrapper/moment-card-wrapper"
+import { PostCardWrapper } from "@/components/wrapper/PostCardWrapper"
+import { MomentCardWrapper } from "@/components/wrapper/MomentCardWrapper"
 
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -17,7 +17,7 @@ const moments = (await getCollection("moments")).sort(
 const latestMoments = moments.slice(0, 4)
 ---
 
-<IndexLayout>
+<IndexLayout title="落秋cc">
   <div>
     <div class="mt-12 mb-8 flex items-center justify-between">
       <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">

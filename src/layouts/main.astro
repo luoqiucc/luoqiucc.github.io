@@ -1,6 +1,13 @@
 ---
+import { Toaster } from "@/components/ui/toast"
+import { Header } from "@/modules/header"
+import { Footer } from "@/modules/footer"
 import "@/styles/global.css"
-import { Toaster } from "sonner"
+
+interface Props {
+  title: string
+}
+const { title } = Astro.props
 ---
 
 <script is:inline>
@@ -31,11 +38,13 @@ import { Toaster } from "sonner"
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-    <title>落秋cc</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
   </head>
   <body>
-    <Toaster client:load />
+    <Header client:load />
     <slot />
+    <Footer />
+    <Toaster />
   </body>
 </html>

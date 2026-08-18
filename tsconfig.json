@@ -7,8 +7,6 @@
     "jsxImportSource": "react",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "strictNullChecks": true,
-    "allowJs": true
+    }
   }
 }

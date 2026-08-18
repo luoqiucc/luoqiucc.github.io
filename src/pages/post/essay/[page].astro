@@ -2,8 +2,8 @@
 import type { GetStaticPathsOptions } from "astro"
 import { getCollection } from "astro:content"
 import IndexLayout from "@/layouts/index.astro"
-import { PostPagination } from "@/components/pagination"
-import { PostCardWrapper } from "@/modules/wrapper/post-card-wrapper"
+import { PostPagination } from "@/components/PostPagination"
+import { PostCardWrapper } from "@/components/wrapper/PostCardWrapper"
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const essays = (
@@ -18,7 +18,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 const { page } = Astro.props
 ---
 
-<IndexLayout>
+<IndexLayout title="随笔">
   <h1
     class="mt-12 mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight text-balance"
   >

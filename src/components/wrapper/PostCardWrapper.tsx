@@ -1,7 +1,7 @@
 import type { CollectionEntry } from "astro:content"
-import { PaperCard } from "@/components/paper-card"
-import { PostCard } from "@/components/post-card"
-import { CollectionCard } from "@/components/collection-card"
+import { PaperCard } from "./card/PaperCard"
+import { PostCard } from "./card/PostCard"
+import { ImageCard } from "./card/ImageCard"
 
 interface Props {
   posts: CollectionEntry<"posts">[]
@@ -12,7 +12,7 @@ function getCardByCategory(category: string) {
     case "paper":
       return PaperCard
     case "collection":
-      return CollectionCard
+      return ImageCard
     default:
       return PostCard
   }
@@ -21,12 +21,7 @@ function getCardByCategory(category: string) {
 function PostCardWrapper({ posts }: Props) {
   return posts.map((post) => {
     const Card = getCardByCategory(post.data.category)
-
-    return (
-      <div key={post.id}>
-        <Card post={post} />
-      </div>
-    )
+    return <Card key={post.id} post={post} />
   })
 }
 
