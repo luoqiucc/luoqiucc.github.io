@@ -18,7 +18,7 @@ interface Props {
 function PaperCard({ post }: Props) {
   return (
     <a href={`/post/${post.id}`}>
-      <Card className="max-h-96 border border-primary">
+      <Card className="max-h-128 border border-primary">
         <CardHeader>
           <CardDescription className="mb-2">
             {formatDateCN(post.data.pubDate)}

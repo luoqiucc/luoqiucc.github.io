@@ -3,27 +3,27 @@ import type { GetStaticPathsOptions } from "astro"
 import { getCollection } from "astro:content"
 import IndexLayout from "@/layouts/index.astro"
 import { PostPagination } from "@/components/PostPagination"
-import { PostCardWrapper } from "@/components/wrapper/PostCardWrapper"
+import { MomentCardWrapper } from "@/components/wrapper/MomentCardWrapper"
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const posts = (await getCollection("posts")).sort(
+  const moments = (await getCollection("moments")).sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
   )
 
-  return paginate(posts, { pageSize: 12 })
+  return paginate(moments, { pageSize: 24 })
 }
 
 const { page } = Astro.props
 ---
 
-<IndexLayout title="全部博客">
+<IndexLayout title="全部动态">
   <h1 class="mt-12 mb-8 scroll-m-20 text-2xl font-semibold tracking-tight">
-    全部博客
+    全部动态
   </h1>
-  <div class="grid grid-cols-1 gap-4">
-    <PostCardWrapper posts={page.data} />
+  <div class="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
+    <MomentCardWrapper moments={page.data} />
   </div>
   <div class="my-8">
-    <PostPagination page={page} category="post" />
+    <PostPagination page={page} category="moment" />
   </div>
 </IndexLayout>

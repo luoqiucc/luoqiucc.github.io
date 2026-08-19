@@ -141,7 +141,7 @@ body {
   position: relative;
 }
 
-.typeset-docs {
+.typeset-article {
   --typeset-font-body: var(--font-inter);
   --typeset-font-heading: var(--font-inter);
   --typeset-font-mono: var(--font-jetbrains-mono);
