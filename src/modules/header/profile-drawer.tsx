@@ -11,6 +11,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Social } from "./social"
 
@@ -43,7 +44,20 @@ function ProfileDrawer() {
         <div className="my-4">
           <Social />
         </div>
-        <div className="p-4"></div>
+        <div className="overflow-y-auto p-4">
+          <div>
+            <Card>
+              <CardContent>
+                <p>
+                  我小的时候，父母偶尔会给我拿点零花钱，我拿着这些钱，叫上我的好朋友去上5块钱3个小时的网，就那种县城里的小网吧，昏暗的灯光，包浆的设备，烟雾缭绕的大厅。我和我的好朋友两个人，玩的像过年一样，我至今不能忘怀。后来我上了班，平常也会去上网，网咖也好电竞酒店也好，几十几百一个晚上的私人包间，环境优雅，设备高端，但是我总也找不到小时候5块钱3个小时小网吧的，那样的激动和感觉。
+                </p>
+              </CardContent>
+              <CardFooter>
+                <p className="italic">《我的上网》 @落秋cc</p>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
         <DrawerFooter>
           <DrawerClose render={<Button variant="ghost" />}>
             <X />
