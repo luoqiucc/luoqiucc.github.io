@@ -22,7 +22,7 @@ function ProjectCard({ project }: Props) {
       <img
         src={project.coverUrl}
         alt="cover"
-        className="relative z-20 aspect-video w-full object-cover"
+        className="relative z-20 aspect-video w-full bg-black/35 object-cover"
       />
       <CardHeader>
         <CardAction>

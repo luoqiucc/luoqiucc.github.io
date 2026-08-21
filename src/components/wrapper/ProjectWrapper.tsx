@@ -6,7 +6,9 @@ interface Props {
 }
 
 function ProjectWrapper({ projects }: Props) {
-  return projects.map((project) => <ProjectCard project={project} />)
+  return projects.map((project) => (
+    <ProjectCard key={project.title} project={project} />
+  ))
 }
 
 export { ProjectWrapper }
