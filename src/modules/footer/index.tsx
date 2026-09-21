@@ -14,6 +14,7 @@ function Footer() {
       <Empty className="h-48">
         <EmptyHeader>
           <EmptyTitle>😋🤣⚡😍😭😅💥😇❓</EmptyTitle>
+          <EmptyDescription>钱塘江上潮信来，今日方知我是我</EmptyDescription>
           <EmptyDescription>&copy; {year} 落秋cc</EmptyDescription>
         </EmptyHeader>
       </Empty>
