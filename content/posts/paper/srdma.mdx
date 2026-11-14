@@ -1,0 +1,26 @@
+---
+title: "sRDMA: A General and Low-Overhead Scheduler for  RDMA"
+subtitle: "APNet '23: Proceedings of the 7th Asia-Pacific Workshop on Networking"
+abstract: "Remote Direct Memory Access (RDMA) has been widely deployed in
+ data centers to improve application performance. However, the characteristic
+ of RDMA to deliver messages in order cannot meet the emerging requirements
+ of applications for scheduling messages within an RDMA connection, making
+ RDMA unable to be fully utilized. Some works try to schedule the data to
+ be transferred in specific applications before delivering to RDMA, or
+ distribute messages to different connections. However, these approaches
+ tightly couple scheduling logic with application logic and may result in
+ high scheduling overhead. In this paper, we propose sRDMA, a general and
+ lowoverhead scheduler working in user-space RDMA driver. sRDMA allows the
+ application to express the expected transfer order to RDMA hardware via
+ work requests (WRs). With priority information in WRs, sRDMA slices and
+ schedules WRs to achieve desired order of message transfer and reduce
+ blocking impact of large messages in the same RDMA connection. Our
+ experiments show that sRDMA can improve the performance of applications,
+ e.g., TensorFlow, by up to 54%, and sRDMA has negligible overhead in terms
+ of CPU and flow throughput."
+category: "paper"
+pubDate: 2026-11-14
+---
+
+## 当前RDMA传输的问题
+
