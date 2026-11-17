@@ -63,41 +63,377 @@ enum ibv_wr_opcode {
 - **CM控制连接**：这是一条普通的 TCP 连接，由 `rdma_cm` 提供，他只用来协商参数，交换 `private_data` 等工作。
 - **QP数据连接**：这个才是 RDMA 通信的数据真正传输的地方。
 
-**发送端（服务端）：**
+服务端和客户端分别有各自的PD, MR, CQ, QP，所以在建立连接的时候服务端和客户端都要先设置好，`private_data` 分别交给对端。
 
-发送端（服务端）首先启动监听。
+下面是具体的代码示例：
+
+**服务端**
+
+服务端首先启动监听，启动监听后开始接受来自客户端的连接请求并建立连接。
 
 ```cpp
+// 启动监听
 int RdmaServer::listen()
 {
     int ret;
+
     ec_ = rdma_create_event_channel();
     if (!ec_)
-        fmt::print("[ERROR]rdma_create_event_channel");
+    {
+        fmt::print("[ERROR]RdmaServer::listen(): rdma_create_event_channel\n");
+        return -1;
+    }
 
     ret = rdma_create_id(ec_, &listen_id_, nullptr, RDMA_PS_TCP);
     if (ret)
-        fmt::print("[ERROR]rdma_create_id");
+    {
+        fmt::print("[ERROR]RdmaServer::listen(): rdma_create_id\n");
+        return -1;
+    }
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(cfg_.port);
     addr.sin_addr.s_addr = INADDR_ANY;
-    
+
     ret = rdma_bind_addr(listen_id_, reinterpret_cast<sockaddr *>(&addr));
     if (ret)
-        fmt::print("[ERROR]rdma_bind_addr");
+    {
+        fmt::print("[ERROR]RdmaServer::listen(): rdma_bind_addr\n");
+        return -1;
+    }
 
     ret = rdma_listen(listen_id_, static_cast<int>(cfg_.backlog));
     if (ret)
-        fmt::print("[ERROR]rdma_listen");
+    {
+        fmt::print("[ERROR]RdmaServer::listen(): rdma_listen\n");
+        return -1;
+    }
+
+    fmt::print("[SERVER OK]Listening on {}:{}\n", "0.0.0.0", cfg_.port);
+    return ret;
+}
+
+// 接受并建立连接
+int RdmaServer::accept()
+{
+    int ret;
+
+    rdma_cm_event *ev{nullptr};
+    ret = rdma_get_cm_event(ec_, &ev);
+    if (ret || (ev->event != RDMA_CM_EVENT_CONNECT_REQUEST))
+    {
+        fmt::print("[ERROR]RdmaServer::accept(): NO RDMA_CM_EVENT_CONNECT_REQUEST\n");
+        rdma_ack_cm_event(ev);
+        return -1;
+    }
+
+    cm_id_ = ev->id;
+
+    fmt::print("[SERVER OK]Connect Request! RDMA Event: {}\n", rdma_event_str(ev->event));
+    rdma_ack_cm_event(ev);
+
+    pd_ = ibv_alloc_pd(cm_id_->verbs);
+    if (!pd_)
+    {
+        fmt::print("[ERROR]RdmaServer::accept(): ibv_alloc_pd\n");
+        return -1;
+    }
+
+    int length = cfg_.mr_size;
+    void *local_addr = malloc(length);
+    mr_ = ibv_reg_mr(pd_, local_addr, length,
+                     IBV_ACCESS_LOCAL_WRITE |
+                         IBV_ACCESS_REMOTE_READ |
+                         IBV_ACCESS_REMOTE_WRITE |
+                         IBV_ACCESS_REMOTE_ATOMIC);
+    if (!mr_)
+    {
+        fmt::print("[ERROR]RdmaServer::accept(): ibv_reg_mr\n");
+        return -1;
+    }
+
+    cq_ = ibv_create_cq(cm_id_->verbs, cfg_.cqe_depth, NULL, NULL, 0);
+    if (!cq_)
+    {
+        fmt::print("[ERROR]RdmaServer::accept(): ibv_create_cq\n");
+        return -1;
+    }
+
+    ibv_qp_init_attr attr{};
+    attr.qp_context = this;
+    attr.send_cq = cq_;
+    attr.recv_cq = cq_;
+    attr.cap.max_send_wr = cfg_.max_send_wr;
+    attr.cap.max_recv_wr = 1;
+    attr.cap.max_send_sge = 1;
+    attr.cap.max_recv_sge = 1;
+    attr.qp_type = IBV_QPT_RC;
+    attr.sq_sig_all = 0;
+    ret = rdma_create_qp(cm_id_, pd_, &attr);
+    if (ret)
+    {
+        fmt::print("[ERROR]RdmaServer::accept(): rdma_create_qp\n");
+        return -1;
+    }
+
+    qp_ = cm_id_->qp;
+
+    auto info =
+        encode_exchange(mr_->rkey, reinterpret_cast<std::uint64_t>(mr_->addr));
+    rdma_conn_param param{};
+    param.initiator_depth = 1;
+    param.retry_count = cfg_.retry_count;
+    param.private_data = info.data();
+    param.private_data_len = static_cast<std::uint8_t>(info.size());
+    ret = rdma_accept(cm_id_, &param);
+    if (ret)
+    {
+        fmt::print("[ERROR]RdmaServer::accept(): rdma_accept\n");
+        return -1;
+    }
+
+    ret = rdma_get_cm_event(ec_, &ev);
+    if (ret || (ev->event != RDMA_CM_EVENT_ESTABLISHED))
+    {
+        fmt::print("[ERROR]RdmaServer::accept(): NO RDMA_CM_EVENT_ESTABLISHED\n");
+        rdma_ack_cm_event(ev);
+        return -1;
+    }
+
+    fmt::print("[SERVER OK]Established! RDMA Event: {}\n", rdma_event_str(ev->event));
+    rdma_ack_cm_event(ev);
 
     return ret;
 }
 ```
 
-**接收端（客户端）：**
+**客户端**
 
-接收端（客户端）请求建立连接，并设置 PD，CQ，QP，MR。
+客户端请求建立连接，并设置 PD，MR，CQ，QP。
+
+```cpp
+int RdmaClient::connect()
+{
+    int ret;
+    rdma_cm_event *ev{nullptr};
+
+    ec_ = rdma_create_event_channel();
+    if (!ec_)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): rdma_create_event_channel\n");
+        return -1;
+    }
+
+    ret = rdma_create_id(ec_, &cm_id_, nullptr, RDMA_PS_TCP);
+    if (ret)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): rdma_create_id\n");
+        return -1;
+    }
+
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(cfg_.port);
+    inet_pton(AF_INET, cfg_.ip.c_str(), &addr.sin_addr);
+    ret = rdma_resolve_addr(cm_id_, nullptr, (sockaddr *)&addr, 2000);
+    if (ret)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): rdma_resolve_addr\n");
+        return -1;
+    }
+
+    ret = rdma_get_cm_event(ec_, &ev);
+    if (ret || (ev->event != RDMA_CM_EVENT_ADDR_RESOLVED))
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): NO RDMA_CM_EVENT_ADDR_RESOLVED\n");
+        rdma_ack_cm_event(ev);
+        return -1;
+    }
+
+    fmt::print("[CLIENT OK]Addr Resolved! RDMA Event: {}\n", rdma_event_str(ev->event));
+    rdma_ack_cm_event(ev);
+
+    ret = rdma_resolve_route(cm_id_, 2000);
+    if (ret)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): rdma_resolve_route\n");
+        return -1;
+    }
+
+    ret = rdma_get_cm_event(ec_, &ev);
+    if (ret || (ev->event != RDMA_CM_EVENT_ROUTE_RESOLVED))
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): NO RDMA_CM_EVENT_ROUTE_RESOLVED\n");
+        rdma_ack_cm_event(ev);
+        return -1;
+    }
+
+    fmt::print("[CLIENT OK]Route Resolved! RDMA Event: {}\n", rdma_event_str(ev->event));
+    rdma_ack_cm_event(ev);
+
+    // 注册 PD
+    pd_ = ibv_alloc_pd(cm_id_->verbs);
+    if (!pd_)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): ibv_alloc_pd\n");
+        return -1;
+    }
+
+    // 注册 MR
+    int length = cfg_.mr_size;
+    void *local_addr = malloc(length);
+    mr_ = ibv_reg_mr(pd_, local_addr, cfg_.mr_size,
+                     IBV_ACCESS_LOCAL_WRITE |
+                         IBV_ACCESS_REMOTE_READ |
+                         IBV_ACCESS_REMOTE_WRITE |
+                         IBV_ACCESS_REMOTE_ATOMIC);
+    if (!mr_)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): ibv_reg_mr\n");
+        return -1;
+    }
+
+    // 注册 CQ
+    cq_ = ibv_create_cq(cm_id_->verbs, cfg_.cqe_depth, nullptr, nullptr, 0);
+    if (!cq_)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): ibv_create_cq\n");
+        return -1;
+    }
+
+    // 创建 QP
+    ibv_qp_init_attr attr{};
+    attr.send_cq = attr.recv_cq = cq_;
+    attr.qp_type = IBV_QPT_RC;
+    attr.sq_sig_all = 0;
+    attr.cap.max_send_wr = cfg_.max_send_wr;
+    attr.cap.max_recv_wr = 4;
+    attr.cap.max_send_sge = 1;
+    attr.cap.max_recv_sge = 1;
+    ret = rdma_create_qp(cm_id_, pd_, &attr);
+    if (ret)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): rdma_create_qp\n");
+        return -1;
+    }
+
+    auto info = encode_exchange(mr_->rkey, reinterpret_cast<std::uint64_t>(mr_->addr));
+    rdma_conn_param conn_param{};
+    conn_param.initiator_depth = 1;
+    conn_param.responder_resources = 1;
+    conn_param.retry_count = 7;
+    conn_param.rnr_retry_count = 7;
+    conn_param.private_data = info.data();
+    conn_param.private_data_len = static_cast<std::uint8_t>(info.size());
+    ret = rdma_connect(cm_id_, &conn_param);
+    if (ret)
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): rdma_connect\n");
+        return -1;
+    }
+
+    ret = rdma_get_cm_event(ec_, &ev);
+    if (ret || (ev->event != RDMA_CM_EVENT_ESTABLISHED))
+    {
+        fmt::print("[ERROR]RdmaClient::connect(): NO RDMA_CM_EVENT_ESTABLISHED\n");
+        rdma_ack_cm_event(ev);
+        return -1;
+    }
+
+    fmt::print("[CLIENT OK]Established! RDMA Event: {}\n", rdma_event_str(ev->event));
+    rdma_ack_cm_event(ev);
+
+    return ret;
+}
+```
+
+通过上面的代码服务端就与客户端正式建立了连接，下面正式开始传输数据。
+
+### 2.2 阶段二，数据传输（RDMA基本操作）
+
+#### 2.2.1 RDMA Send/Recv
+
+下面是一个 RDMA Send 的示例，RDMA Send 是一个双边操作，如果是在客户端发起一个 Send 操作就需要服务端预先挂载一个用来接收的 WR，这样服务端才能够知道接收的数据要放到哪里。
+
+**服务端**
+
+在正式接收的时候需要先调用 `post_recv()` 预先挂一个用来接收的 WR，然后客户端发起 Send 请求，服务端在 `recv()` 中轮询检查是否完成。
+
+```cpp
+int RdmaServer::post_recv()
+{
+    ibv_sge sge{};
+    sge.addr = reinterpret_cast<std::uintptr_t>(mr_->addr);
+    sge.length = static_cast<std::uint32_t>(mr_->length);
+    sge.lkey = mr_->lkey;
+    ibv_recv_wr wr{};
+    wr.wr_id = 1;
+    wr.sg_list = &sge;
+    wr.num_sge = 1;
+    ibv_recv_wr *bad = nullptr;
+    return ibv_post_recv(qp_, &wr, &bad) ? -1 : 0;
+}
+
+std::optional<std::string> RdmaServer::recv()
+{
+    ibv_wc wc{};
+    while (ibv_poll_cq(cq_, 1, &wc) == 0)
+        std::this_thread::sleep_for(std::chrono::microseconds(50));
+
+    if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_RECV)
+        return std::nullopt;
+
+    std::string msg(static_cast<const char *>(mr_->addr), wc.byte_len);
+    return msg;
+}
+```
+
+**客户端**
+
+客户端建立用于 Send 的 WR 并挂到发送队列，然后也是与服务端一样轮询等待发送结果。
+
+```cpp
+int RdmaClient::rdma_send(std::string_view msg)
+{
+    std::memcpy(mr_->addr, msg.data(), msg.size());
+    ibv_sge sge{};
+    sge.addr = reinterpret_cast<std::uintptr_t>(mr_->addr);
+    sge.length = static_cast<std::uint32_t>(msg.size());
+    sge.lkey = mr_->lkey;
+
+    ibv_send_wr wr{};
+    wr.wr_id = 1;
+    wr.sg_list = &sge;
+    wr.num_sge = 1;
+    wr.opcode = IBV_WR_SEND;
+    wr.send_flags = IBV_SEND_SIGNALED;
+
+    ibv_send_wr *bad = nullptr;
+    if (ibv_post_send(qp_, &wr, &bad))
+    {
+        fmt::print("[ERROR]RdmaClient::rdma_send(): ibv_post_send\n");
+        return -1;
+    }
+
+    ibv_wc wc{};
+    while (ibv_poll_cq(cq_, 1, &wc) == 0)
+        std::this_thread::sleep_for(std::chrono::microseconds(50));
+
+    if (wc.status != IBV_WC_SUCCESS)
+    {
+        fmt::print("[ERROR]{}\n", ibv_wc_status_str(wc.status));
+        return -1;
+    }
+
+    return 0;
+}
+```
+
+RDMA Recv 操作与 Send 基本一致，他们的区别只是数据方向相反，这里就不在赘述。
+
+**RDMA Write**
+
+**RDMA Read**
 
 ## 参考

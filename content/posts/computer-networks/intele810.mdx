@@ -188,3 +188,34 @@ ib_write_bw -R <IP address of server>
 # 示例
 sudo ib_write_bw -d rocep1s0f1 -R <IP address of server>
 ```
+
+## 常见问题
+
+1. 用一段时间后驱动莫名其妙不在了，使用 `modinfo` 命令查看后发现当前的ice和irdma模块变成了系统内置版本而不是自己安装的版本。
+
+这个问题是由于内核升级造成的，新内核中不会有这些模块，需要给新内核重新编译。
+
+示例：
+
+```shell
+# 重编 ice
+cd ice-<x.x.x>/src/
+sudo make CFLAGS_EXTRA='-DUNIFIED_STATS' install
+sudo rmmod ice
+sudo modprobe ice
+
+# 重编 irdma
+cd irdma-<x.x.x>
+sudo ./build.sh
+sudo modprobe irdma
+```
+
+除了手动重新编译外，还可以尝试使用 _DKMS_ 工具在每次更新内核后自动重新编译。
+
+2. 加载irdma模块的时候出现下面的错误：
+
+```shell
+modprobe: ERROR: could not insert 'irdma': Key was rejected by service
+```
+
+这个问题一般是内核安全策略导致的，最简单的解决办法就是直接在主板BIOS中关闭安全启动（Secure Boot）。
