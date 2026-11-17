@@ -14,11 +14,6 @@ pubDate: 2026-11-12
 
 Send 和 Receive是一种双端操作，这种操作完成一次通信需要两端CPU共同参与。收发双方都需要显式的下发WR(WQE)来发送与接收数据。
 
-对应的Verbs API：
-
-- ibv_post_send: 下发发送WR
-- ibv_post_recv: 下发接收WR
-
 ### 1.1.2 RDMA Write 和 RDMA Read
 
 他们非常相似，操作都是本地发起的，只是数据流向不同，RDMA Write 主动写入远端内存，RDMA Read 主动读取远端内存，都属于单边操作。在发起该操作之前，两端需要先做好一定准备（例如分配缓存，注册MR，交换密钥等操作）。在此之后，进行 RDMA Write 或是 RDMA Read 操作时远端不需要CPU参与，也无法感知数据写入或读取的状态。
@@ -52,7 +47,23 @@ enum ibv_wr_opcode {
 
 #### 1.3.1 事件频道(ec\_)
 
-由 `rdma_event_channel` 创建，这就是本地的事件收发箱
+由 `rdma_event_channel` 创建，这就是本地的事件收发箱。
+
+#### 1.3.2 保护域(pd\_)
+
+由 `ibv_alloc_pd` 创建，同一张网卡内部的资源命名空间与隔离边界。
+
+#### 1.3.3 内存区域(MR\_)
+
+由 `ibv_reg_mr` 创建，网卡接管的一段虚拟内存，我们发送与接收的数据就是存在这里。
+
+#### 1.3.4 完成队列(CQ\_)
+
+由 `ibv_create_cq` 创建，是网卡写，我们读的一个环形队列。每完成一个 WR，网卡就往里面塞一条 CQE（Work Completion）。
+
+#### 1.3.5 队列对(QP\_)
+
+由 `rdma_create_qp` 创建，是一个发送队列（SQ）和一个接收队列（RQ）的组合，RDMA 通信的基本单位，我们的创建的WR和CQE就是在这里被发送和接收。
 
 ## 二，RDMA通信的代码实现与拆解
 
@@ -432,8 +443,68 @@ int RdmaClient::rdma_send(std::string_view msg)
 
 RDMA Recv 操作与 Send 基本一致，他们的区别只是数据方向相反，这里就不在赘述。
 
-**RDMA Write**
+注意，在测试时注意 `post_recv()` 以后再让客户端发起 Send，否则客户端的 Send 到达后可能服务端的接收 WR 还没有准备好，此时会报 `RNR retry counter exceeded`
 
-**RDMA Read**
+**RDMA Write/Read**
+
+RDMA Write/Read 操作与 Send/Recv 类似，只是创建的WR类型不同，另外 Write/Read 属于单边操作，服务端不感知，数据传完后直接在对应的内存处取数据即可。下面是一个 RDMA Write 操作的示例，RDMA Read 的实现也是基本一致，只是数据流向不同，这里便不再赘述。
+
+**服务端**
+
+服务端只需要新增一个从MR取值的函数即可。
+
+```cpp
+std::string RdmaServer::peek()
+{
+    return std::string(static_cast<const char *>(mr_->addr), cfg_.mr_size);
+}
+```
+
+**客户端**
+
+```cpp
+int RdmaClient::rdma_write(std::string_view msg)
+{
+    if (msg.size() > cfg_.mr_size)
+        return -1;
+
+    std::memcpy(mr_->addr, msg.data(), msg.size());
+    ibv_sge sge{};
+    sge.addr = reinterpret_cast<std::uintptr_t>(mr_->addr);
+    sge.length = static_cast<std::uint32_t>(msg.size());
+    sge.lkey = mr_->lkey;
+
+    ibv_send_wr wr{};
+    wr.wr_id = 1;
+    wr.sg_list = &sge;
+    wr.num_sge = 1;
+    wr.opcode = IBV_WR_RDMA_WRITE;
+    wr.send_flags = IBV_SEND_SIGNALED;
+    wr.wr.rdma.remote_addr = peer_info_.raddr;
+    wr.wr.rdma.rkey = peer_info_.rkey;
+
+    ibv_send_wr *bad = nullptr;
+    if (ibv_post_send(qp_, &wr, &bad))
+        return -1;
+
+    ibv_wc wc{};
+    while (ibv_poll_cq(cq_, 1, &wc) == 0)
+        std::this_thread::sleep_for(std::chrono::microseconds(50));
+
+   if (wc.status != IBV_WC_SUCCESS)
+    {
+        fmt::print("[ERROR]{}\n", ibv_wc_status_str(wc.status));
+        return -1;
+    }
+
+    return 0;
+}
+```
+
+客户端执行 Write 操作后服务端取值即可。
 
 ## 参考
+
+- 《Linux高性能网络详解从DPDK，RDMA到XDP》
+- 《InfiniBand Architecture Specification Volume 1》
+- [RDMA 基础示例代码](https://github.com/Ljt0721/rdma-basic-tutorial)
